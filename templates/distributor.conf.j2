@@ -1,0 +1,32 @@
+##############################
+#                            #
+# Ansible / Tower managed on #
+#                            #
+##############################
+
+{% if pipeline.beats is defined %}
+{% for beat in pipeline.beats %}
+input {
+    beats {
+        port => "{{ beat }}"
+        {% if logstash_beats_ssl %}
+        ssl_enabled => true
+        ssl_certificate => "{{ logstash_ssl_path }}/{{ logstash_cluster_name }}/{{ logstash_cluster_name }}.crt"
+        ssl_key => "{{ logstash_ssl_path }}/{{ logstash_cluster_name }}/{{ logstash_cluster_name }}.key"
+        {% endif %}
+        {% if logstash_client_auth %}
+        ssl_client_authentication => required
+        ssl_certificate_authorities => ["{{ logstash_ssl_authorities }}"]
+        {% endif %}
+    }
+}
+{% endfor %}
+{% endif %}
+
+output {
+{% for pipeline in logstash_pipelines %}
+    if [pipeline_name] == "{{ pipeline.name }}" {
+        pipeline { send_to => {{ pipeline.name }} }
+    }
+{% endfor %}
+}

@@ -1,0 +1,29 @@
+##############################
+#                            #
+# Ansible / Tower managed on #
+#                            #
+##############################
+# This file is where you define your pipelines. You can define multiple.
+# For more information on multiple pipelines, see the documentation:
+#   https://www.elastic.co/guide/en/logstash/current/multiple-pipelines.html
+
+- pipeline.id: "{{ logstash_distributor_pipeline.name }}"
+  path.config: "{{ logstash_pipelines_path }}/{{ logstash_distributor_pipeline.name }}/{{ logstash_distributor_pipeline.name }}.conf"
+  pipeline.workers: "{{ logstash_distributor_pipeline.workers }}"
+  pipeline.batch.delay: 5000
+  pipeline.ordered: false
+
+- pipeline.id: "{{ logstash_health_check_pipeline.name }}"
+  path.config: "{{ logstash_pipelines_path }}/{{ logstash_health_check_pipeline .name }}/*.conf"
+  pipeline.workers: "{{ logstash_health_check_pipeline.workers }}"
+  pipeline.batch.delay: 5000
+  pipeline.ordered: false
+
+{% for pipeline in logstash_pipelines %}
+- pipeline.id: "{{ pipeline.name }}"
+  path.config: "{{ logstash_pipelines_path }}/{{ pipeline.name }}/*.conf"
+  pipeline.workers: "{{ logstash_health_check_pipeline.workers }}"
+  pipeline.batch.delay: 5000
+  pipeline.ordered: false
+
+{% endfor %}

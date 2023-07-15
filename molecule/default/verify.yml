@@ -1,0 +1,115 @@
+---
+# Don't forget to keep this file updated
+# molecule/<scenario>/verify.yml
+- name: "Verify"
+  hosts: "all"
+  gather_facts: false
+  tasks:
+
+    - name: "Get Logstash service current state"
+      register: logstash_service_status
+      failed_when: not logstash_service_status.status.ActiveState == 'active'
+      ansible.builtin.systemd:
+        name: "logstash"
+
+    - name: "Check Logstash folders and conf"
+      block:
+        - name: "Check Logstash folders"
+          loop:
+            - "{{ inv_logstash_config_path }}"
+            - "{{ inv_logstash_data_path }}"
+          loop_control:
+            loop_var: folder_path
+          register: folder_check
+          failed_when: not folder_check.stat.exists
+          ansible.builtin.stat:
+            path: "{{ folder_path }}"
+
+        - name: "Check Logstash health check pipeline folder"
+          register: folder_check
+          failed_when: not folder_check.stat.exists
+          ansible.builtin.stat:
+            path: "{{ inv_logstash_pipelines_path }}/{{ inv_logstash_health_check_pipeline.name }}"
+
+        - name: "Check Logstash pipelines folders"
+          loop: "{{ inv_logstash_pipelines }}"
+          loop_control:
+            loop_var: pipeline
+          register: folder_check
+          failed_when: not folder_check.stat.exists
+          ansible.builtin.stat:
+            path: "{{ inv_logstash_pipelines_path }}/{{ pipeline.name }}/beats.conf"
+
+    - name: "Check Logstash API"
+      when: inv_logstash_api
+      block:
+        - name: "Check unprotected API HTTP URL"
+          when: inv_logstash_api_auth_type != "basic" and not inv_logstash_api_ssl
+          register: result
+          failed_when: result.status != 200
+          ansible.builtin.uri:
+            url: "http://{{ inventory_hostname }}:{{ inv_logstash_api_ports }}/"
+            method: "GET"
+
+        - name: "Check protected API HTTP URL"
+          when: inv_logstash_api_auth_type == "basic" and not inv_logstash_api_ssl
+          register: result
+          failed_when: result.status != 200
+          ansible.builtin.uri:
+            url: "http://{{ inventory_hostname }}:{{ inv_logstash_api_ports }}/"
+            method: "GET"
+            force_basic_auth: true
+            user: "{{ inv_logstash_api_auth_login }}"
+            password: "{{ inv_logstash_api_auth_password }}"
+
+        - name: "Check protected API HTTPS URL (check password failure)"
+          when: inv_logstash_api_auth_type == "basic" and not inv_logstash_api_ssl
+          register: result
+          failed_when: result.status != 401
+          ansible.builtin.uri:
+            url: "http://{{ inventory_hostname }}:{{ inv_logstash_api_ports }}/"
+            method: "GET"
+            force_basic_auth: true
+            user: "BAD-{{ inv_logstash_api_auth_login }}"
+            password: "BAD-{{ inv_logstash_api_auth_password }}"
+
+        - name: "Check unprotected API HTTPS URL"
+          when: inv_logstash_api_auth_type != "basic" and inv_logstash_api_ssl
+          register: result
+          failed_when: result.status != 200
+          ansible.builtin.uri:
+            url: "https://{{ inventory_hostname }}:{{ inv_logstash_api_ports }}/"
+            method: "GET"
+
+        - name: "Check protected API HTTPS URL"
+          when: inv_logstash_api_auth_type == "basic" and inv_logstash_api_ssl
+          register: result
+          failed_when: result.status != 200
+          ansible.builtin.uri:
+            url: "https://{{ inventory_hostname }}:{{ inv_logstash_api_ports }}/"
+            method: "GET"
+            force_basic_auth: true
+            user: "{{ inv_logstash_api_auth_login }}"
+            password: "{{ inv_logstash_api_auth_password }}"
+
+        - name: "Check protected API HTTPS URL (check password failure)"
+          when: inv_logstash_api_auth_type == "basic" and inv_logstash_api_ssl
+          register: result
+          failed_when: result.status != 401
+          ansible.builtin.uri:
+            url: "https://{{ inventory_hostname }}:{{ inv_logstash_api_ports }}/"
+            method: "GET"
+            force_basic_auth: true
+            user: "BAD-{{ inv_logstash_api_auth_login }}"
+            password: "BAD-{{ inv_logstash_api_auth_password }}"
+
+    - name: "Check Logstash pipelines"
+      block:
+        - name: "Check Logstash pipelines connectivities"
+          loop: "{{ inv_logstash_pipelines }}"
+          loop_control:
+            loop_var: pipeline
+          ansible.builtin.wait_for:
+            host: "{{ inventory_hostname }}"
+            port: "{{ pipeline.beats[0] }}"
+            timeout: 120

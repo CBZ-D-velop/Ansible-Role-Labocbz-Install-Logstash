@@ -1,0 +1,55 @@
+---
+logstash_major_version: "8"
+
+logstash_config_path: "/etc/logstash"
+logstash_ssl_path: "{{ logstash_config_path }}/ssl"
+logstash_pipelines_path: "{{ logstash_config_path }}/pipelines"
+logstash_pipelines_reload: "5s"
+logstash_pipelines:
+  - name: "main"
+    workers: 1
+    beats:
+      - 5045
+  - name: "main2"
+    workers: 1
+    beats:
+      - 5046
+  - name: "main3"
+    workers: 1
+    beats:
+      - 5047
+
+logstash_health_check_pipeline:
+  name: "health"
+  workers: 1
+  beats: 
+    - 5043
+
+logstash_distributor_pipeline:
+  name: "distributor"
+  workers: 5
+  beats: 
+    - 5044
+
+logstash_beats_ssl: false
+logstash_api: true
+logstash_api_ports: "9600-9700"
+logstash_api_auth_type: "basic"
+logstash_api_auth_login: "admin"
+logstash_api_auth_password: "s3cUreP4$$w0rD"
+logstash_api_ssl: false
+logstash_api_jks: "/etc/logstash/ssl/my.jks.jks"
+logstash_api_jks_password: "secretPassword"
+logstash_host: "0.0.0.0"
+logstash_port: 5044
+
+logstash_cluster_name: "my.logstash-cluster.tld"
+logstash_client_auth: true
+logstash_ssl_authorities: "/etc/ssl/cacert.pem"
+logstash_elasticsearch_client_auth: false
+
+logstash_data_path: "/var/lib/logstash/data"
+
+logstash_group: "logstash"
+logstash_user: "logstash"
+logstash_ram: "1g"

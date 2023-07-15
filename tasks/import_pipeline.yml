@@ -1,0 +1,41 @@
+---
+- name: "import_pipeline | Create Logstash pipeline path: {{ pipeline.name }}"
+  register: output
+  changed_when: output.size <= 0
+  ansible.builtin.file:
+    path: "{{ logstash_pipelines_path }}/{{ pipeline.name }}"
+    state: directory
+    recurse: yes
+    group: "{{ logstash_group }}"
+    owner: "{{ logstash_user }}"
+    mode: 0770
+
+- name: "import_pipeline | Create Logstash pipeline beat file: {{ pipeline.name }}"
+  register: output
+  changed_when: output.size <= 0
+  ansible.builtin.file:
+    path: "{{ logstash_pipelines_path }}/{{ pipeline.name }}/beats.conf"
+    state: touch
+    group: "{{ logstash_group }}"
+    owner: "{{ logstash_user }}"
+    mode: 0770
+
+- name: "import_pipeline | Template Logstash pipeline beat file: {{ pipeline.name }}"
+  when: pipeline.name != logstash_distributor_pipeline.name
+  ansible.builtin.template:
+    src: "templates/logstash_beats.conf.j2"
+    dest: "{{ logstash_pipelines_path }}/{{ pipeline.name }}/beats.conf"
+    mode: 0770
+    group: "{{ logstash_group }}"
+    owner: "{{ logstash_user }}"
+    lstrip_blocks: yes
+
+- name: "import_pipeline | Template Logstash pipeline beat file: {{ pipeline.name }}"
+  when: pipeline.name == logstash_distributor_pipeline.name
+  ansible.builtin.template:
+    src: "templates/distributor.conf.j2"
+    dest: "{{ logstash_pipelines_path }}/{{ pipeline.name }}/{{ pipeline.name }}.conf"
+    mode: 0770
+    group: "{{ logstash_group }}"
+    owner: "{{ logstash_user }}"
+    lstrip_blocks: yes

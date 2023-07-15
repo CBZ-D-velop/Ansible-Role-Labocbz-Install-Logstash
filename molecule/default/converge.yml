@@ -1,0 +1,43 @@
+---
+- name: "Converge"
+  hosts: "all"
+  tasks:
+    # replace these tasks with whatever you find suitable to test
+    - name: "Copy something to test use of synchronize module"
+      ansible.builtin.copy:
+        src: "/etc/hosts"
+        dest: "/tmp/hosts-from-controller"
+        mode: 0700
+
+    - name: "Include labocbz.install_logstash"
+      tags:
+        - "labocbz.install_logstash"
+      vars:
+        logstash_major_version: "{{ inv_logstash_major_version }}"
+        logstash_config_path: "{{ inv_logstash_config_path }}"
+        logstash_ssl_path: "{{ inv_logstash_ssl_path }}"
+        logstash_pipelines_path: "{{ inv_logstash_pipelines_path }}"
+        logstash_pipelines_reload: "{{ inv_logstash_pipelines_reload }}"
+        logstash_pipelines: "{{ inv_logstash_pipelines }}"
+        logstash_health_check_pipeline: "{{ inv_logstash_health_check_pipeline }}"
+        logstash_api: "{{ inv_logstash_api }}"
+        logstash_api_ports: "{{ inv_logstash_api_ports }}"
+        logstash_api_auth_type: "{{ inv_logstash_api_auth_type }}"
+        logstash_api_auth_login: "{{ inv_logstash_api_auth_login }}"
+        logstash_api_auth_password: "{{ inv_logstash_api_auth_password }}"
+        logstash_host: "{{ inv_logstash_host }}"
+        logstash_cluster_name: "{{ inv_logstash_cluster_name }}"
+        logstash_data_path: "{{ inv_logstash_data_path }}"
+        logstash_group: "{{ inv_logstash_group }}"
+        logstash_user: "{{ inv_logstash_user }}"
+        logstash_ram: "{{ inv_logstash_ram }}"
+        logstash_api_ssl: "{{ inv_logstash_api_ssl }}"
+        logstash_api_jks: "{{ inv_logstash_api_jks }}"
+        logstash_api_jks_password: "{{ inv_logstash_api_jks_password }}"
+        logstash_beats_ssl: "{{ inv_logstash_beats_ssl }}"
+        logstash_client_auth: "{{ inv_logstash_client_auth }}"
+        logstash_ssl_authorities: "{{ inv_logstash_ssl_authorities }}"
+        logstash_elasticsearch_client_auth: "{{ inv_logstash_elasticsearch_client_auth }}"
+        logstash_distributor_pipeline: "{{ inv_logstash_distributor_pipeline }}"
+      ansible.builtin.include_role:
+        name: "labocbz.install_logstash"

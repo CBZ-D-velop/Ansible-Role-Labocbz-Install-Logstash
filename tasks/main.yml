@@ -1,0 +1,147 @@
+---
+- name: "Install packages"
+  ansible.builtin.package:
+    update_cache: true
+    name:
+      - apt-transport-https
+
+- name: "Install Logstash"
+  notify: "Enable and start Logstash"
+  block:
+    - name: "Add Logstash GPG apt Key"
+      ansible.builtin.apt_key:
+        url: "https://artifacts.elastic.co/GPG-KEY-elasticsearch"
+
+    - name: "Add Logstash Repository"
+      ansible.builtin.apt_repository:
+        repo: "deb [arch=amd64] https://artifacts.elastic.co/packages/{{ logstash_major_version }}.x/apt stable main"
+
+    - name: "Update apt and install Logstash"
+      ansible.builtin.apt:
+        update_cache: true
+        name:
+          - logstash
+
+    - name: "Add Logstash user to adm group"
+      ansible.builtin.user:
+        user: "{{ logstash_user }}"
+        group: "{{ logstash_group }}"
+        groups: "adm"
+
+- name: "Fix default installation"
+  notify: "Restart Logstash"
+  block:
+    - name: "Import Logstash service"
+      ansible.builtin.template:
+        src: "templates/logstash.service.j2"
+        dest: "/lib/systemd/system/logstash.service"
+        owner: "root"
+        group: "root"
+        mode: 0700
+
+    - name: "Set permissions"
+      loop:
+        - "/tmp/logstash"
+        - "{{ logstash_data_path }}"
+        - "/var/log/logstash"
+        - "/usr/share/logstash"
+        - "/etc/logstash"
+      loop_control:
+        loop_var: path
+      ansible.builtin.file:
+        path: "{{ path }}"
+        recurse: yes
+        mode: 0770
+        group: "{{ logstash_group }}"
+        owner: "{{ logstash_user }}"
+
+    - name: "Create conf directory for inputs"
+      register: output
+      changed_when: output.size <= 0
+      ansible.builtin.file:
+        path: "{{ logstash_config_path }}"
+        state: directory
+        recurse: yes
+        mode: 0770
+        group: "{{ logstash_group }}"
+        owner: "{{ logstash_user }}"
+
+- name: "Configure Logstash"
+  notify: "Restart Logstash"
+  block:
+    - name: "Import Logstash configuration file"
+      ansible.builtin.template:
+        src: "templates/logstash.yml.j2"
+        dest: "{{ logstash_config_path }}/logstash.yml"
+        mode: 0770
+        group: "{{ logstash_group }}"
+        owner: "{{ logstash_user }}"
+        lstrip_blocks: yes
+
+    - name: "Create Logstash storage path"
+      register: output
+      changed_when: output.size <= 0
+      ansible.builtin.file:
+        path: "{{ logstash_data_path }}"
+        state: directory
+        recurse: yes
+        group: "{{ logstash_group }}"
+        owner: "{{ logstash_user }}"
+        mode: 0770
+
+    - name: "Import Logstash options for JVM"
+      ansible.builtin.template:
+        src: "templates/jvm.options.j2"
+        dest: "{{ logstash_config_path }}/jvm.options"
+        mode: 0770
+        group: "{{ logstash_group }}"
+        owner: "{{ logstash_user }}"
+        lstrip_blocks: yes
+
+    - name: "Import Logstash pipelines.yml file"
+      ansible.builtin.template:
+        src: "templates/pipelines.yml.j2"
+        dest: "{{ logstash_config_path }}/pipelines.yml"
+        mode: 0770
+        group: "{{ logstash_group }}"
+        owner: "{{ logstash_user }}"
+        lstrip_blocks: yes
+
+    - name: "Remove all old Logstash unused pipelines"
+      block:
+        - name: "Find all Logstash pipelines folders"
+          register: folders
+          ansible.builtin.find:
+            paths: "{{ logstash_pipelines_path }}"
+
+        - name: "Remove all other Logstash unused confs"
+          when: file not in (logstash_pipelines | json_query('[].name))
+          loop: "{{ folders.files }}"
+          loop_control:
+            loop_var: file
+          
+          ansible.builtin.file:
+            path: "{{ logstash_pipelines_path }}/{{ file }}"
+            state: absent
+
+- name: "Import all Logstash pipelines"
+  notify: "Restart Logstash"
+  block:
+    - name: "Create Logstash distributor check pipeline"
+      vars:
+        pipeline: "{{ logstash_distributor_pipeline }}"
+      ansible.builtin.include_tasks:
+        file: "import_pipeline.yml"
+
+    - name: "Create Logstash health check pipeline"
+      vars:
+        pipeline: "{{ logstash_health_check_pipeline }}"
+      ansible.builtin.include_tasks:
+        file: "import_pipeline.yml"
+
+    - name: "Create Logstash pipelines"
+      loop: "{{ logstash_pipelines }}"
+      loop_control:
+        loop_var: pipeline
+      ansible.builtin.include_tasks:
+        file: "import_pipeline.yml"
