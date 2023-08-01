@@ -10,9 +10,9 @@ Group=logstash
 # exist, it continues onward.
 EnvironmentFile=-/etc/default/logstash
 EnvironmentFile=-/etc/sysconfig/logstash
-ExecStart=/usr/share/logstash/bin/logstash "--path.settings" "{{ logstash_config_path }}"
+ExecStart=/usr/share/logstash/bin/logstash "--path.settings" "{{ install_logstash_config_path }}"
 Restart=always
-WorkingDirectory={{ logstash_data_path }}
+WorkingDirectory={{ install_logstash_data_path }}
 Nice=19
 LimitNOFILE=16384
 

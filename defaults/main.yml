@@ -1,11 +1,11 @@
 ---
-logstash_major_version: "8"
+install_logstash_major_version: "8"
 
-logstash_config_path: "/etc/logstash"
-logstash_ssl_path: "{{ logstash_config_path }}/ssl"
-logstash_pipelines_path: "{{ logstash_config_path }}/pipelines"
-logstash_pipelines_reload: "5s"
-logstash_pipelines:
+install_logstash_config_path: "/etc/logstash"
+install_logstash_ssl_path: "{{ install_logstash_config_path }}/ssl"
+install_logstash_pipelines_path: "{{ install_logstash_config_path }}/pipelines"
+install_logstash_pipelines_reload: "5s"
+install_logstash_pipelines:
   - name: "main"
     workers: 1
     beats:
@@ -19,37 +19,40 @@ logstash_pipelines:
     beats:
       - 5047
 
-logstash_health_check_pipeline:
+install_logstash_health_check_pipeline:
   name: "health"
   workers: 1
   beats: 
     - 5043
 
-logstash_distributor_pipeline:
+install_logstash_distributor_pipeline:
   name: "distributor"
   workers: 5
   beats: 
     - 5044
 
-logstash_beats_ssl: false
-logstash_api: true
-logstash_api_ports: "9600-9700"
-logstash_api_auth_type: "basic"
-logstash_api_auth_login: "admin"
-logstash_api_auth_password: "s3cUreP4$$w0rD"
-logstash_api_ssl: false
-logstash_api_jks: "/etc/logstash/ssl/my.jks.jks"
-logstash_api_jks_password: "secretPassword"
-logstash_host: "0.0.0.0"
-logstash_port: 5044
+install_logstash_beats_ssl: false
+install_logstash_api: true
+install_logstash_api_ports: "9600-9700"
+install_logstash_api_auth_type: "basic"
+install_logstash_api_auth_login: "admin"
+install_logstash_api_auth_password: "s3cUreP4$$w0rD"
+install_logstash_api_ssl: false
+install_logstash_api_jks: "/etc/logstash/ssl/my.jks.jks"
+install_logstash_api_jks_password: "secretPassword"
+install_logstash_api_p12: "/etc/logstash/ssl/my.p12.p12"
+install_logstash_host: "0.0.0.0"
+install_logstash_port: 5044
 
-logstash_cluster_name: "my.logstash-cluster.tld"
-logstash_client_auth: true
-logstash_ssl_authorities: "/etc/ssl/cacert.pem"
-logstash_elasticsearch_client_auth: false
+install_logstash_cluster_name: "my.logstash-cluster.tld"
+install_logstash_client_auth: true
+install_logstash_ssl_crt: "/etc/ssl/cert.crt"
+install_logstash_ssl_key: "/etc/ssl/key.key"
+install_logstash_ssl_authorities: "/etc/ssl/cacert.pem"
+install_logstash_elasticsearch_client_auth: false
 
-logstash_data_path: "/var/lib/logstash/data"
+install_logstash_data_path: "/var/lib/logstash/data"
 
-logstash_group: "logstash"
-logstash_user: "logstash"
-logstash_ram: "1g"
+install_logstash_group: "logstash"
+install_logstash_user: "logstash"
+install_logstash_ram: "1g"

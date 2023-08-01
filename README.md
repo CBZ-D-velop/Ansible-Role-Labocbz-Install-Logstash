@@ -101,13 +101,13 @@ Some vars a required to run this role:
 
 ```YAML
 ---
-logstash_major_version: "8"
+install_logstash_major_version: "8"
 
-logstash_config_path: "/etc/logstash"
-logstash_ssl_path: "{{ logstash_config_path }}/ssl"
-logstash_pipelines_path: "{{ logstash_config_path }}/pipelines"
-logstash_pipelines_reload: "5s"
-logstash_pipelines:
+install_logstash_config_path: "/etc/logstash"
+install_logstash_ssl_path: "{{ install_logstash_config_path }}/ssl"
+install_logstash_pipelines_path: "{{ install_logstash_config_path }}/pipelines"
+install_logstash_pipelines_reload: "5s"
+install_logstash_pipelines:
   - name: "main"
     workers: 1
     beats:
@@ -121,36 +121,36 @@ logstash_pipelines:
     beats:
       - 5047
 
-logstash_health_check_pipeline:
+install_logstash_health_check_pipeline:
   name: "health"
   workers: 1
   beats: 
     - 5043
 
-logstash_distributor_pipeline:
+install_logstash_distributor_pipeline:
   name: "distributor"
   workers: 5
   beats: 
     - 5044
 
-logstash_beats_ssl: false
-logstash_api: true
-logstash_api_ports: "9600-9700"
-logstash_api_auth_type: "basic"
-logstash_api_auth_login: "admin"
-logstash_api_auth_password: "s3cUreP4$$w0rD"
-logstash_api_ssl: false
-logstash_api_jks: "/etc/logstash/ssl/my.jks.jks"
-logstash_api_jks_password: "secretPassword"
-logstash_host: "0.0.0.0"
+install_logstash_beats_ssl: false
+install_logstash_api: true
+install_logstash_api_ports: "9600-9700"
+install_logstash_api_auth_type: "basic"
+install_logstash_api_auth_login: "admin"
+install_logstash_api_auth_password: "s3cUreP4$$w0rD"
+install_logstash_api_ssl: false
+install_logstash_api_jks: "/etc/logstash/ssl/my.jks.jks"
+install_logstash_api_jks_password: "secretPassword"
+install_logstash_host: "0.0.0.0"
 
-logstash_cluster_name: "my.logstash-cluster.tld"
+install_logstash_cluster_name: "my.logstash-cluster.tld"
 
-logstash_data_path: "/var/lib/logstash/data"
+install_logstash_data_path: "/var/lib/logstash/data"
 
-logstash_group: "logstash"
-logstash_user: "logstash"
-logstash_ram: "1g"
+install_logstash_group: "logstash"
+install_logstash_user: "logstash"
+install_logstash_ram: "1g"
 
 ```
 
@@ -164,12 +164,12 @@ In order to surchage vars, you have multiples possibilities but for mains cases 
 # From inventory
 ---
 
-inv_logstash_major_version: 8
-inv_logstash_config_path: "/etc/logstash"
-inv_logstash_ssl_path: "{{ inv_logstash_config_path }}/ssl"
-inv_logstash_pipelines_path: "{{ inv_logstash_config_path }}/pipelines"
-inv_logstash_pipelines_reload: "5s"
-inv_logstash_pipelines:
+inv_install_logstash_major_version: 8
+inv_install_logstash_config_path: "/etc/logstash"
+inv_install_logstash_ssl_path: "{{ inv_install_logstash_config_path }}/ssl"
+inv_install_logstash_pipelines_path: "{{ inv_install_logstash_config_path }}/pipelines"
+inv_install_logstash_pipelines_reload: "5s"
+inv_install_logstash_pipelines:
   - name: "main"
     workers: 1
     beats:
@@ -183,37 +183,37 @@ inv_logstash_pipelines:
     beats:
       - 5047
 
-inv_logstash_health_check_pipeline:
+inv_install_logstash_health_check_pipeline:
   name: "health"
   workers: 1
   beats: 
     - 5043
 
-inv_logstash_distributor_pipeline:
+inv_install_logstash_distributor_pipeline:
   name: "distributor"
   workers: 5
   beats: 
     - 5044
 
-inv_logstash_beats_ssl: true
+inv_install_logstash_beats_ssl: true
 
-inv_logstash_api: true
-inv_logstash_api_ports: "9600"
-inv_logstash_api_auth_type: "basic"
-inv_logstash_api_auth_login: "admin"
-inv_logstash_api_auth_password: "s3cUreP4$$w0rD"
-inv_logstash_api_ssl: true
-inv_logstash_api_jks: "{{ inv_logstash_ssl_path }}/{{ inv_logstash_cluster_name }}/{{ inv_logstash_cluster_name }}.jks"
-inv_logstash_api_jks_password: "secret"
-inv_logstash_host: "0.0.0.0"
+inv_install_logstash_api: true
+inv_install_logstash_api_ports: "9600"
+inv_install_logstash_api_auth_type: "basic"
+inv_install_logstash_api_auth_login: "admin"
+inv_install_logstash_api_auth_password: "s3cUreP4$$w0rD"
+inv_install_logstash_api_ssl: true
+inv_install_logstash_api_jks: "{{ inv_install_logstash_ssl_path }}/{{ inv_install_logstash_cluster_name }}/{{ inv_install_logstash_cluster_name }}.jks"
+inv_install_logstash_api_jks_password: "secret"
+inv_install_logstash_host: "0.0.0.0"
 
-inv_logstash_cluster_name: "my.logstash-cluster.tld"
+inv_install_logstash_cluster_name: "my.logstash-cluster.tld"
 
-inv_logstash_data_path: "/var/lib/logstash/data"
+inv_install_logstash_data_path: "/var/lib/logstash/data"
 
-inv_logstash_group: "logstash"
-inv_logstash_user: "logstash"
-inv_logstash_ram: "1g"
+inv_install_logstash_group: "logstash"
+inv_install_logstash_user: "logstash"
+inv_install_logstash_ram: "1g"
 
 ```
 
@@ -232,29 +232,29 @@ To run this role, you can copy the molecule/default/converge.yml playbook and ad
   tags:
     - "labocbz.install_logstash"
   vars:
-    logstash_major_version: "{{ inv_logstash_major_version }}"
-    logstash_config_path: "{{ inv_logstash_config_path }}"
-    logstash_ssl_path: "{{ inv_logstash_ssl_path }}"
-    logstash_pipelines_path: "{{ inv_logstash_pipelines_path }}"
-    logstash_pipelines_reload: "{{ inv_logstash_pipelines_reload }}"
-    logstash_pipelines: "{{ inv_logstash_pipelines }}"
-    logstash_health_check_pipeline: "{{ inv_logstash_health_check_pipeline }}"
-    logstash_api: "{{ inv_logstash_api }}"
-    logstash_api_ports: "{{ inv_logstash_api_ports }}"
-    logstash_api_auth_type: "{{ inv_logstash_api_auth_type }}"
-    logstash_api_auth_login: "{{ inv_logstash_api_auth_login }}"
-    logstash_api_auth_password: "{{ inv_logstash_api_auth_password }}"
-    logstash_host: "{{ inv_logstash_host }}"
-    logstash_cluster_name: "{{ inv_logstash_cluster_name }}"
-    logstash_data_path: "{{ inv_logstash_data_path }}"
-    logstash_group: "{{ inv_logstash_group }}"
-    logstash_user: "{{ inv_logstash_user }}"
-    logstash_ram: "{{ inv_logstash_ram }}"
-    logstash_api_ssl: "{{ inv_logstash_api_ssl }}"
-    logstash_api_jks: "{{ inv_logstash_api_jks }}"
-    logstash_api_jks_password: "{{ inv_logstash_api_jks_password }}"
-    logstash_beats_ssl: "{{ inv_logstash_beats_ssl }}"
-    logstash_distributor_pipeline: "{{ inv_logstash_distributor_pipeline }}
+    install_logstash_major_version: "{{ inv_install_logstash_major_version }}"
+    install_logstash_config_path: "{{ inv_install_logstash_config_path }}"
+    install_logstash_ssl_path: "{{ inv_install_logstash_ssl_path }}"
+    install_logstash_pipelines_path: "{{ inv_install_logstash_pipelines_path }}"
+    install_logstash_pipelines_reload: "{{ inv_install_logstash_pipelines_reload }}"
+    install_logstash_pipelines: "{{ inv_install_logstash_pipelines }}"
+    install_logstash_health_check_pipeline: "{{ inv_install_logstash_health_check_pipeline }}"
+    install_logstash_api: "{{ inv_install_logstash_api }}"
+    install_logstash_api_ports: "{{ inv_install_logstash_api_ports }}"
+    install_logstash_api_auth_type: "{{ inv_install_logstash_api_auth_type }}"
+    install_logstash_api_auth_login: "{{ inv_install_logstash_api_auth_login }}"
+    install_logstash_api_auth_password: "{{ inv_install_logstash_api_auth_password }}"
+    install_logstash_host: "{{ inv_install_logstash_host }}"
+    install_logstash_cluster_name: "{{ inv_install_logstash_cluster_name }}"
+    install_logstash_data_path: "{{ inv_install_logstash_data_path }}"
+    install_logstash_group: "{{ inv_install_logstash_group }}"
+    install_logstash_user: "{{ inv_install_logstash_user }}"
+    install_logstash_ram: "{{ inv_install_logstash_ram }}"
+    install_logstash_api_ssl: "{{ inv_install_logstash_api_ssl }}"
+    install_logstash_api_jks: "{{ inv_install_logstash_api_jks }}"
+    install_logstash_api_jks_password: "{{ inv_install_logstash_api_jks_password }}"
+    install_logstash_beats_ssl: "{{ inv_install_logstash_beats_ssl }}"
+    install_logstash_distributor_pipeline: "{{ inv_install_logstash_distributor_pipeline }}
   ansible.builtin.include_role:
     name: "labocbz.install_logstash"
 ```
@@ -275,6 +275,12 @@ Here you can put your change to keep a trace of your work and decisions.
 ### 2023-06-05: Distributor pattern
 
 * Implement a distributor pattern to redirect flux to their pipeline in case of Filebeat have to send multiple type of pipelines logs/metrics
+
+### 2023-08-01: Cert and Key update
+
+* You can now use custom name with the role for key and cert
+* JKS is now created by the role
+* P12 and JKS have the same password
 
 ## Authors
 

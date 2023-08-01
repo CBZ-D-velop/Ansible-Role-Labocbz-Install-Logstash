@@ -1,7 +1,7 @@
 ---
 - name: "Enable and start Logstash"
-  register: logstash_service_status
-  changed_when: not logstash_service_status.state != "started"
+  register: install_logstash_service_status
+  changed_when: not install_logstash_service_status.state != "started"
   ansible.builtin.service:
     name: "logstash"
     state: "started"
@@ -9,8 +9,8 @@
     enabled: yes
 
 - name: "Restart Logstash"
-  register: logstash_service_status
-  changed_when: not logstash_service_status.state != "restarted"
+  register: install_logstash_service_status
+  changed_when: not install_logstash_service_status.state != "restarted"
   ansible.builtin.service:
     name: "logstash"
     state: "restarted"
