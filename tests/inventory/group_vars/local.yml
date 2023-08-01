@@ -1,4 +1,9 @@
 ---
+inv_prepare_host_users:
+  - login: "elastic"
+    group: "elastic"
+  - login: "logstash"
+    group: "logstash"
 
 inv_install_logstash_major_version: 8
 inv_install_logstash_config_path: "/etc/logstash"
