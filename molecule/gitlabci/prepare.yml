@@ -11,6 +11,8 @@
     - name: "Include labocbz.prepare_host"
       tags:
         - "labocbz.prepare_host"
+      vars:
+        prepare_host_users: "{{ inv_prepare_host_users }}"
       ansible.builtin.include_role:
         name: "labocbz.prepare_host"
 
@@ -80,3 +82,23 @@
         java_version_is_default: true
       ansible.builtin.include_role:
         name: "labocbz.install_java"
+
+    - name: "Include labocbz.install_elasticsearch"
+      tags:
+        - "labocbz.install_elasticsearch"
+      vars:
+        install_elasticsearch_major_version: "{{ inv_install_elasticsearch_major_version }}"
+        install_elasticsearch_port: "{{ inv_install_elasticsearch_port }}"
+        install_elasticsearch_cluster_name: "{{ inv_install_elasticsearch_cluster_name }}"
+        install_elasticsearch_elastic_password: "{{ inv_install_elasticsearch_elastic_password }}"
+        install_elasticsearch_heap: "{{ inv_install_elasticsearch_heap }}"
+        install_elasticsearch_data_path: "{{ inv_install_elasticsearch_data_path }}"
+        install_elasticsearch_ssl_path: "{{ inv_install_elasticsearch_ssl_path }}"
+        install_elasticsearch_config_path: "{{ inv_install_elasticsearch_config_path }}"
+        install_elasticsearch_client_auth: "{{ inv_install_elasticsearch_client_auth }}"
+        install_elasticsearch_ssl_authorities: "{{ inv_install_elasticsearch_ssl_authorities }}"
+        install_elasticsearch_ssl: "{{ inv_install_elasticsearch_ssl }}"
+        install_elasticsearch_ssl_key: "{{ inv_install_elasticsearch_ssl_key }}"
+        install_elasticsearch_ssl_crt: "{{ inv_install_elasticsearch_ssl_crt }}"
+      ansible.builtin.include_role:
+        name: "labocbz.install_elasticsearch"
