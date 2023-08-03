@@ -49,7 +49,7 @@
       register: output
       changed_when: output.size <= 0
       ansible.builtin.file:
-        path: "{{ install_logstash_config_path }}"
+        path: "{{ install_logstash_pipelines_path }}"
         state: directory
         recurse: yes
         mode: "0770"
