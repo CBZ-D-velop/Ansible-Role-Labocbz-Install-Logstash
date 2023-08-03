@@ -8,13 +8,13 @@
 #   https://www.elastic.co/guide/en/logstash/current/multiple-pipelines.html
 
 - pipeline.id: "{{ install_logstash_distributor_pipeline.name }}"
-  path.config: "{{ install_logstash_pipelines_path }}/{{ install_logstash_distributor_pipeline.name }}/{{ install_logstash_distributor_pipeline.name }}.conf"
+  path.config: "{{ install_logstash_pipelines_path }}/{{ install_logstash_distributor_pipeline.name }}.conf"
   pipeline.workers: "{{ install_logstash_distributor_pipeline.workers }}"
   pipeline.batch.delay: 5000
   pipeline.ordered: false
 
 - pipeline.id: "{{ install_logstash_health_check_pipeline.name }}"
-  path.config: "{{ install_logstash_pipelines_path }}/{{ install_logstash_health_check_pipeline .name }}/*.conf"
+  path.config: "{{ install_logstash_pipelines_path }}/{{  install_logstash_distributor_pipeline.name }}.conf"
   pipeline.workers: "{{ install_logstash_health_check_pipeline.workers }}"
   pipeline.batch.delay: 5000
   pipeline.ordered: false

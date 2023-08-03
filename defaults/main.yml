@@ -41,8 +41,10 @@ install_logstash_api_ssl: false
 install_logstash_api_jks: "/etc/logstash/ssl/my.jks.jks"
 install_logstash_api_jks_password: "secretPassword"
 install_logstash_api_p12: "/etc/logstash/ssl/my.p12.p12"
+install_logstash_ssl_p8: "/etc/logstash/ssl/my.p8.p8"
 install_logstash_host: "0.0.0.0"
 install_logstash_port: 5044
+install_logstash_loglevel: "info"
 
 install_logstash_cluster_name: "my.logstash-cluster.tld"
 install_logstash_client_auth: true
@@ -56,3 +58,10 @@ install_logstash_data_path: "/var/lib/logstash/data"
 install_logstash_group: "logstash"
 install_logstash_user: "logstash"
 install_logstash_ram: "1g"
+
+install_logstash_elasticsearch_shard: 1
+install_logstash_elasticsearch_ssl: true
+install_logstash_elasticsearch_login: "user"
+install_logstash_elasticsearch_password: "password"
+install_logstash_elasticsearch_hosts:
+  - "http://localhost:9200"

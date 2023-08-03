@@ -29,7 +29,7 @@
           register: folder_check
           failed_when: not folder_check.stat.exists
           ansible.builtin.stat:
-            path: "{{ inv_install_logstash_pipelines_path }}/{{ inv_install_logstash_health_check_pipeline.name }}"
+            path: "{{ inv_install_logstash_pipelines_path }}/{{ inv_install_logstash_health_check_pipeline.name }}.conf"
 
         - name: "Check Logstash pipelines folders"
           loop: "{{ inv_install_logstash_pipelines }}"

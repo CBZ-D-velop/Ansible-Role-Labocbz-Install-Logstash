@@ -3,10 +3,13 @@
   ansible.builtin.package:
     update_cache: true
     name:
-      - apt-transport-https
+      - "apt-transport-https"
 
 - name: "Install Logstash"
-  notify: "Enable and start Logstash"
+  notify: 
+    - "Set Logstash permissions"
+    - "Enable and start Logstash"
+    - "Delay Logstash starting"
   block:
     - name: "Add Logstash GPG apt Key"
       ansible.builtin.apt_key:
@@ -29,7 +32,10 @@
         groups: "adm"
 
 - name: "Fix default installation"
-  notify: "Restart Logstash"
+  notify:
+    - "Set Logstash permissions"
+    - "Restart Logstash"
+    - "Delay Logstash starting"
   block:
     - name: "Import Logstash service"
       ansible.builtin.template:
@@ -38,22 +44,6 @@
         owner: "root"
         group: "root"
         mode: "0700"
-
-    - name: "Set permissions"
-      loop:
-        - "/tmp/logstash"
-        - "{{ install_logstash_data_path }}"
-        - "/var/log/logstash"
-        - "/usr/share/logstash"
-        - "/etc/logstash"
-      loop_control:
-        loop_var: path
-      ansible.builtin.file:
-        path: "{{ path }}"
-        recurse: yes
-        mode: "0770"
-        group: "{{ install_logstash_group }}"
-        owner: "{{ install_logstash_user }}"
 
     - name: "Create conf directory for inputs"
       register: output
@@ -67,7 +57,10 @@
         owner: "{{ install_logstash_user }}"
 
 - name: "Configure Logstash"
-  notify: "Restart Logstash"
+  notify: 
+    - "Set Logstash permissions"
+    - "Restart Logstash"
+    - "Delay Logstash starting"
   block:
     - name: "Import Logstash configuration file"
       ansible.builtin.template:
@@ -113,32 +106,56 @@
           register: folders
           ansible.builtin.find:
             paths: "{{ install_logstash_pipelines_path }}"
+            file_type: directory
 
-        - name: "Remove all other Logstash unused confs"
-          when: file not in (install_logstash_pipelines | json_query('[].name))
+        - name: "Remove all other Logstash confs"
           loop: "{{ folders.files }}"
           loop_control:
             loop_var: file
           ansible.builtin.file:
-            path: "{{ install_logstash_pipelines_path }}/{{ file }}"
+            path: "{{ file.path }}"
             state: absent
 
-        - name: "Handle mTLS with JKS"
-          when: install_logstash_api_ssl | default (false)
-          block:
-          - name: "Create the P12 file"
-            register: output
-            changed_when: output.rc != 0
-            ansible.builtin.command: "openssl pkcs12 -export -in {{ install_logstash_ssl_crt }} -inkey {{ install_logstash_ssl_key }} -out {{ install_logstash_api_p12 }}-name {{ install_logstash_cluster_name }} -passout pass:{{ inv_install_logstash_api_jks_password }}"
+    - name: "Handle JKS"
+      when: install_logstash_api_ssl | default (false)
+      block:
+      - name: "Check if JKS exist"
+        register: jks_path_stat
+        ansible.builtin.stat:
+          path: "{{ install_logstash_api_jks }}"
 
-          - name: "Create the JKS file"
-            register: output
-            changed_when: output.rc != 0
-            ansible.builtin.command: "keytool -importkeystore -srckeystore {{ install_logstash_api_p12 }} -srcstoretype PKCS12 -destkeystore {{ install_logstash_api_jks }} -storepass '{{ inv_install_logstash_api_jks_password }}' -keypass '{{ inv_install_logstash_api_jks_password }}' -deststoretype JKS"
+      - name: "Remove JKS"
+        when: jks_path_stat.stat.exists
+        register: output
+        changed_when: output.state != "absent"
+        ansible.builtin.file:
+          path: "{{ install_logstash_api_jks }}"
+          state: absent
+          mode: "0770"
+          group: "{{ install_logstash_group }}"
+          owner: "{{ install_logstash_user }}"
 
+    - name: "Create the P12 file"
+      register: output
+      changed_when: output.rc != 0
+      ansible.builtin.command: "openssl pkcs12 -export -inkey {{ install_logstash_ssl_key }} -in {{ install_logstash_ssl_crt }} -out {{ install_logstash_api_p12 }} -password pass:{{ install_logstash_api_jks_password }}"
+
+    - name: "Create the JKS file"
+      register: output
+      changed_when: output.rc != 0
+      ansible.builtin.command: "keytool -importkeystore -srckeystore {{ install_logstash_api_p12 }} -srcstoretype PKCS12 -destkeystore {{ install_logstash_api_jks }} -srcstorepass '{{ install_logstash_api_jks_password }}' -deststorepass '{{ install_logstash_api_jks_password }}' -deststoretype JKS -noprompt"
+
+    - name: "Create the P8 file"
+      register: output
+      changed_when: output.rc != 0
+      when: install_logstash_elasticsearch_client_auth | default(false)
+      ansible.builtin.command: "openssl pkcs8 -in {{ install_logstash_ssl_key }} -topk8 -out {{ install_logstash_ssl_p8 }} -nocrypt"
 
 - name: "Import all Logstash pipelines"
-  notify: "Restart Logstash"
+  notify: 
+    - "Set Logstash permissions"
+    - "Restart Logstash"
+    - "Delay Logstash starting"
   block:
     - name: "Create Logstash distributor check pipeline"
       vars:

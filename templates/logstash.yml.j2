@@ -98,12 +98,12 @@ path.data: "{{ install_logstash_data_path }}"
 #
 # At startup, test if the configuration is valid and exit (dry run)
 #
-# config.test_and_exit: false
+# config.test_and_exit: true
 #
 # Periodically check if the configuration has changed and reload the pipeline
 # This can also be triggered manually through the SIGHUP signal
 #
-# config.reload.automatic: false
+config.reload.automatic: true
 #
 # How often to check if the pipeline configuration has changed (in seconds)
 # Note that the unit value (s) is required. Values without a qualifier (e.g. 60) 
@@ -318,8 +318,8 @@ api.auth.basic.password_policy.mode: WARN
 #   * debug
 #   * trace
 #
-# log.level: info
-# path.logs:
+log.level: "{{ install_logstash_loglevel }}"
+path.logs: "/var/log/logstash"
 #
 # ------------ Other Settings --------------
 #
