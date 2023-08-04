@@ -1,41 +1,59 @@
 ---
-- name: "import_pipeline | Create Logstash pipeline path: {{ pipeline.name }}"
-  register: output
-  changed_when: output.size <= 0
-  ansible.builtin.file:
-    path: "{{ logstash_pipelines_path }}/{{ pipeline.name }}"
-    state: directory
-    recurse: yes
-    group: "{{ logstash_group }}"
-    owner: "{{ logstash_user }}"
-    mode: 0770
-
-- name: "import_pipeline | Create Logstash pipeline beat file: {{ pipeline.name }}"
-  register: output
-  changed_when: output.size <= 0
-  ansible.builtin.file:
-    path: "{{ logstash_pipelines_path }}/{{ pipeline.name }}/beats.conf"
-    state: touch
-    group: "{{ logstash_group }}"
-    owner: "{{ logstash_user }}"
-    mode: 0770
-
-- name: "import_pipeline | Template Logstash pipeline beat file: {{ pipeline.name }}"
-  when: pipeline.name != logstash_distributor_pipeline.name
-  ansible.builtin.template:
-    src: "templates/logstash_beats.conf.j2"
-    dest: "{{ logstash_pipelines_path }}/{{ pipeline.name }}/beats.conf"
-    mode: 0770
-    group: "{{ logstash_group }}"
-    owner: "{{ logstash_user }}"
-    lstrip_blocks: yes
-
-- name: "import_pipeline | Template Logstash pipeline beat file: {{ pipeline.name }}"
-  when: pipeline.name == logstash_distributor_pipeline.name
+- name: "import_pipeline | Template Logstash pipeline: {{ pipeline.name }}"
+  when: pipeline.name == install_logstash_distributor_pipeline.name or pipeline.name == install_logstash_health_check_pipeline.name
   ansible.builtin.template:
     src: "templates/distributor.conf.j2"
-    dest: "{{ logstash_pipelines_path }}/{{ pipeline.name }}/{{ pipeline.name }}.conf"
-    mode: 0770
-    group: "{{ logstash_group }}"
-    owner: "{{ logstash_user }}"
+    dest: "{{ install_logstash_pipelines_path }}/{{ pipeline.name }}.conf"
+    mode: "0770"
+    group: "{{ install_logstash_group }}"
+    owner: "{{ install_logstash_user }}"
     lstrip_blocks: yes
+
+- name: "import_pipeline | Template Logstash pipeline: {{ pipeline.name }}"
+  when: pipeline.name != install_logstash_distributor_pipeline.name and pipeline.name != install_logstash_health_check_pipeline.name
+  block:
+    - name: "import_pipeline | Create Logstash pipeline path: {{ pipeline.name }}"
+      register: output
+      changed_when: output.size <= 0
+      ansible.builtin.file:
+        path: "{{ install_logstash_pipelines_path }}/{{ pipeline.name }}"
+        state: directory
+        recurse: yes
+        group: "{{ install_logstash_group }}"
+        owner: "{{ install_logstash_user }}"
+        mode: "0770"
+
+    - name: "import_pipeline | Template Logstash pipeline beat file: {{ pipeline.name }}"
+      ansible.builtin.template:
+        src: "templates/beats.conf.j2"
+        dest: "{{ install_logstash_pipelines_path }}/{{ pipeline.name }}/beats.conf"
+        mode: "0770"
+        group: "{{ install_logstash_group }}"
+        owner: "{{ install_logstash_user }}"
+        lstrip_blocks: yes
+
+    - name: "import_pipeline | Template Logstash pipeline output file: {{ pipeline.name }}"
+      ansible.builtin.template:
+        src: "templates/output.conf.j2"
+        dest: "{{ install_logstash_pipelines_path }}/{{ pipeline.name }}/output.conf"
+        mode: "0770"
+        group: "{{ install_logstash_group }}"
+        owner: "{{ install_logstash_user }}"
+        lstrip_blocks: yes
+
+    - name: "import_pipeline | Template Logstash pipeline {{ pipeline.name }}-template.json file: {{ pipeline.name }}"
+      ansible.builtin.template:
+        src: "templates/index_template.json.j2"
+        dest: "{{ install_logstash_pipelines_path }}/{{ pipeline.name }}/template.json"
+        mode: "0770"
+        group: "{{ install_logstash_group }}"
+        owner: "{{ install_logstash_user }}"
+        lstrip_blocks: yes
+
+    - name: "import_pipeline | Import Logstash pipeline filter file: {{ pipeline.name }}"
+      ansible.builtin.copy:
+        src: "files/{{ pipeline.name }}_filter.conf"
+        dest: "{{ install_logstash_pipelines_path }}/{{ pipeline.name }}/filter.conf"
+        mode: "0770"
+        group: "{{ install_logstash_group }}"
+        owner: "{{ install_logstash_user }}"

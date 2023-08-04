@@ -4,7 +4,7 @@
 #                            #
 ##############################
 
-{% if pipeline.beats is defined %}
+{% if pipeline.beats | default(false) %}
 {% for beat in pipeline.beats %}
 input {
     beats {
@@ -22,11 +22,3 @@ input {
 }
 {% endfor %}
 {% endif %}
-
-output {
-{% for pipeline in install_logstash_pipelines %}
-    if [pipeline_name] == "{{ pipeline.name }}" {
-        pipeline { send_to => {{ pipeline.name }} }
-    }
-{% endfor %}
-}

@@ -11,6 +11,8 @@
     - name: "Include labocbz.prepare_host"
       tags:
         - "labocbz.prepare_host"
+      vars:
+        prepare_host_users: "{{ inv_prepare_host_users }}"
       ansible.builtin.include_role:
         name: "labocbz.prepare_host"
 
@@ -28,14 +30,26 @@
       changed_when: output.rc != 0
       ansible.builtin.shell: "echo \"{{ hostvars[host]['ansible_default_ipv4']['address'] }}  {{ host }} # from Molecule\" >> /etc/hosts"
 
-    - name: "Import cryptographic content if needed"
-      run_once: yes
+    - name: "Import cryptographic content if needed (cert)"
       loop: "{{ inv_cert_bundles }}"
       loop_control:
         loop_var: bundle
+      when: inv_cert_bundles is defined and bundle.type == "cert"
       ansible.builtin.copy:
         src: "../../tests/certs/{{ bundle.name }}.zip"
         dest: "/tmp/{{ bundle.name }}.zip"
+        owner: "root"
+        group: "root"
+        mode: 0700
+
+    - name: "Import cryptographic content if needed (CA)"
+      loop: "{{ inv_cert_bundles }}"
+      loop_control:
+        loop_var: bundle
+      when: inv_cert_bundles is defined and bundle.type == "CA"
+      ansible.builtin.copy:
+        src: "../../tests/certs/{{ bundle.name }}"
+        dest: "/tmp/{{ bundle.name }}"
         owner: "root"
         group: "root"
         mode: 0700
@@ -51,11 +65,11 @@
         add_certificates_bundle_type: "{{ bundle.type }}"
         add_certificates_bundle_src: "{{ bundle.src }}"
         add_certificates_bundle_dest: "{{ bundle.dest }}"
-        #add_certificates_bundle_src_user: "{{ bundle.src_user }}"
-        #add_certificates_bundle_src_password: "{{ bundle.src_password }}"
-        #add_certificates_bundle_dest_user: "{{ bundle.dest_user }}"
-        #add_certificates_bundle_dest_group: "{{ bundle.dest_group }}"
-        #add_certificates_bundle_dest_mode: "{{ bundle.dest_mode }}"
+        add_certificates_bundle_src_user: "{{ bundle.src_user }}"
+        add_certificates_bundle_src_password: "{{ bundle.src_password }}"
+        add_certificates_bundle_dest_user: "{{ bundle.dest_user }}"
+        add_certificates_bundle_dest_group: "{{ bundle.dest_group }}"
+        add_certificates_bundle_dest_mode: "{{ bundle.dest_mode }}"
       ansible.builtin.include_role:
         name: "labocbz.add_certificates"
 
@@ -68,3 +82,23 @@
         java_version_is_default: true
       ansible.builtin.include_role:
         name: "labocbz.install_java"
+
+    - name: "Include labocbz.install_elasticsearch"
+      tags:
+        - "labocbz.install_elasticsearch"
+      vars:
+        install_elasticsearch_major_version: "{{ inv_install_elasticsearch_major_version }}"
+        install_elasticsearch_port: "{{ inv_install_elasticsearch_port }}"
+        install_elasticsearch_cluster_name: "{{ inv_install_elasticsearch_cluster_name }}"
+        install_elasticsearch_elastic_password: "{{ inv_install_elasticsearch_elastic_password }}"
+        install_elasticsearch_heap: "{{ inv_install_elasticsearch_heap }}"
+        install_elasticsearch_data_path: "{{ inv_install_elasticsearch_data_path }}"
+        install_elasticsearch_ssl_path: "{{ inv_install_elasticsearch_ssl_path }}"
+        install_elasticsearch_config_path: "{{ inv_install_elasticsearch_config_path }}"
+        install_elasticsearch_client_auth: "{{ inv_install_elasticsearch_client_auth }}"
+        install_elasticsearch_ssl_authorities: "{{ inv_install_elasticsearch_ssl_authorities }}"
+        install_elasticsearch_ssl: "{{ inv_install_elasticsearch_ssl }}"
+        install_elasticsearch_ssl_key: "{{ inv_install_elasticsearch_ssl_key }}"
+        install_elasticsearch_ssl_crt: "{{ inv_install_elasticsearch_ssl_crt }}"
+      ansible.builtin.include_role:
+        name: "labocbz.install_elasticsearch"
