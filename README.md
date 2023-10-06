@@ -360,6 +360,13 @@ Here you can put your change to keep a trace of your work and decisions.
 * Filter are now importer from files/ in the role, their name have to be name_filter.conf syntax
 * The role is designed to be on one shot, so all conf are deleted before anything
 
+### 2023-10-06: New CICD, new Images
+
+* New CI/CD scenario name
+* Molecule now use remote Docker image by Lord Robin Crombez
+* Molecule now use custom Docker image in CI/CD by env vars
+* New CICD with needs and optimization
+
 ## Authors
 
 * Lord Robin Crombez
