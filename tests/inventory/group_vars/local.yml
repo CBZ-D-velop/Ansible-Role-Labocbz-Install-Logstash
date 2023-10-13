@@ -65,14 +65,12 @@ inv_install_logstash_data_path: "/var/lib/logstash/data"
 inv_install_logstash_group: "logstash"
 inv_install_logstash_user: "logstash"
 inv_install_logstash_ram: "1g"
-inv_install_logstash_loglevel: "debug"
+inv_install_logstash_loglevel: "info"
 
-inv_install_logstash_elasticsearch_shard: 3
+inv_install_logstash_elasticsearch_shard: 1
 inv_install_logstash_elasticsearch_ssl: true
 inv_install_logstash_elasticsearch_client_auth: true
 inv_install_logstash_elasticsearch_login: "elastic"
 inv_install_logstash_elasticsearch_password: "myVeryStringP@ssword"
 inv_install_logstash_elasticsearch_hosts:
   - "molecule-local-instance-1-install-logstash:9200"
-  - "molecule-local-instance-2-install-logstash:9200"
-  - "molecule-local-instance-3-install-logstash:9200"
