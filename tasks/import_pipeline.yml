@@ -4,7 +4,7 @@
   ansible.builtin.template:
     src: "templates/distributor.conf.j2"
     dest: "{{ install_logstash_pipelines_path }}/{{ pipeline.name }}.conf"
-    mode: "0770"
+    mode: "0700"
     group: "{{ install_logstash_group }}"
     owner: "{{ install_logstash_user }}"
     lstrip_blocks: yes
@@ -21,13 +21,13 @@
         recurse: yes
         group: "{{ install_logstash_group }}"
         owner: "{{ install_logstash_user }}"
-        mode: "0770"
+        mode: "0700"
 
     - name: "import_pipeline | Template Logstash pipeline beat file: {{ pipeline.name }}"
       ansible.builtin.template:
         src: "templates/beats.conf.j2"
         dest: "{{ install_logstash_pipelines_path }}/{{ pipeline.name }}/beats.conf"
-        mode: "0770"
+        mode: "0700"
         group: "{{ install_logstash_group }}"
         owner: "{{ install_logstash_user }}"
         lstrip_blocks: yes
@@ -36,7 +36,7 @@
       ansible.builtin.template:
         src: "templates/output.conf.j2"
         dest: "{{ install_logstash_pipelines_path }}/{{ pipeline.name }}/output.conf"
-        mode: "0770"
+        mode: "0700"
         group: "{{ install_logstash_group }}"
         owner: "{{ install_logstash_user }}"
         lstrip_blocks: yes
@@ -45,7 +45,7 @@
       ansible.builtin.template:
         src: "templates/index_template.json.j2"
         dest: "{{ install_logstash_pipelines_path }}/{{ pipeline.name }}/template.json"
-        mode: "0770"
+        mode: "0700"
         group: "{{ install_logstash_group }}"
         owner: "{{ install_logstash_user }}"
         lstrip_blocks: yes
@@ -54,6 +54,6 @@
       ansible.builtin.copy:
         src: "files/{{ pipeline.name }}_filter.conf"
         dest: "{{ install_logstash_pipelines_path }}/{{ pipeline.name }}/filter.conf"
-        mode: "0770"
+        mode: "0700"
         group: "{{ install_logstash_group }}"
         owner: "{{ install_logstash_user }}"

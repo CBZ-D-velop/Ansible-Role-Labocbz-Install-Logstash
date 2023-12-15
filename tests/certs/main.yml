@@ -19,9 +19,9 @@ inv_cert_bundles:
     dest: "/etc/elasticsearch/ssl"
     #src_user: "myUser"
     #src_password: "secretPassword"
-    dest_user: "root"
-    dest_group: "elastic"
-    dest_mode: "0755"
+    dest_user: "elasticsearch"
+    dest_group: "elasticsearch"
+    dest_mode: "0700"
 
   - name: "my-logstash-cluster.domain.tld"
     type: "cert"
@@ -31,4 +31,4 @@ inv_cert_bundles:
     #src_password: "secretPassword"
     dest_user: "logstash"
     dest_group: "logstash"
-    dest_mode: "0770"
+    dest_mode: "0700"
