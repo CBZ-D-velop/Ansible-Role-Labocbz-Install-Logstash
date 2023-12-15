@@ -1,7 +1,7 @@
 ---
-inv_prepare_host_users:
-  - login: "elastic"
-    group: "elastic"
+inv_prepare_host_system_users:
+  - login: "elasticsearch"
+    group: "elasticsearch"
   - login: "logstash"
     group: "logstash"
 

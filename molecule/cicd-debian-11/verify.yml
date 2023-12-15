@@ -48,7 +48,7 @@
           register: result
           failed_when: result.status != 200
           ansible.builtin.uri:
-            url: "http://localhost:{{ inv_install_logstash_api_ports }}/"
+            url: "http://{{ inventory_hostname }}:{{ inv_install_logstash_api_ports }}/"
             method: "GET"
 
         - name: "Check protected API HTTP URL"
@@ -56,7 +56,7 @@
           register: result
           failed_when: result.status != 200
           ansible.builtin.uri:
-            url: "http://localhost:{{ inv_install_logstash_api_ports }}/"
+            url: "http://{{ inventory_hostname }}:{{ inv_install_logstash_api_ports }}/"
             method: "GET"
             force_basic_auth: true
             user: "{{ inv_install_logstash_api_auth_login }}"
@@ -67,7 +67,7 @@
           register: result
           failed_when: result.status != 401
           ansible.builtin.uri:
-            url: "http://localhost:{{ inv_install_logstash_api_ports }}/"
+            url: "http://{{ inventory_hostname }}:{{ inv_install_logstash_api_ports }}/"
             method: "GET"
             force_basic_auth: true
             user: "BAD-{{ inv_install_logstash_api_auth_login }}"
@@ -78,7 +78,7 @@
           register: result
           failed_when: result.status != 200
           ansible.builtin.uri:
-            url: "https://localhost:{{ inv_install_logstash_api_ports }}/"
+            url: "https://{{ inventory_hostname }}:{{ inv_install_logstash_api_ports }}/"
             method: "GET"
 
         - name: "Check protected API HTTPS URL"
@@ -86,7 +86,7 @@
           register: result
           failed_when: result.status != 200
           ansible.builtin.uri:
-            url: "https://localhost:{{ inv_install_logstash_api_ports }}/"
+            url: "https://{{ inventory_hostname }}:{{ inv_install_logstash_api_ports }}/"
             method: "GET"
             force_basic_auth: true
             user: "{{ inv_install_logstash_api_auth_login }}"
@@ -97,7 +97,7 @@
           register: result
           failed_when: result.status != 401
           ansible.builtin.uri:
-            url: "https://localhost:{{ inv_install_logstash_api_ports }}/"
+            url: "https://{{ inventory_hostname }}:{{ inv_install_logstash_api_ports }}/"
             method: "GET"
             force_basic_auth: true
             user: "BAD-{{ inv_install_logstash_api_auth_login }}"
@@ -110,6 +110,6 @@
           loop_control:
             loop_var: pipeline
           ansible.builtin.wait_for:
-            host: "localhost"
+            host: "{{ inventory_hostname }}"
             port: "{{ pipeline.beats[0] }}"
             timeout: 120

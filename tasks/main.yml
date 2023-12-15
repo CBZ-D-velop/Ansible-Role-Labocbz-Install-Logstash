@@ -7,7 +7,6 @@
 
 - name: "Install Logstash"
   notify: 
-    - "Set Logstash permissions"
     - "Enable and start Logstash"
     - "Delay Logstash starting"
   block:
@@ -33,7 +32,6 @@
 
 - name: "Fix default installation"
   notify:
-    - "Set Logstash permissions"
     - "Restart Logstash"
     - "Delay Logstash starting"
   block:
@@ -43,7 +41,7 @@
         dest: "/lib/systemd/system/logstash.service"
         owner: "root"
         group: "root"
-        mode: "0700"
+        mode: "0600"
 
     - name: "Create conf directory for inputs"
       register: output
@@ -52,13 +50,12 @@
         path: "{{ install_logstash_pipelines_path }}"
         state: directory
         recurse: yes
-        mode: "0770"
+        mode: "0700"
         group: "{{ install_logstash_group }}"
         owner: "{{ install_logstash_user }}"
 
 - name: "Configure Logstash"
   notify: 
-    - "Set Logstash permissions"
     - "Restart Logstash"
     - "Delay Logstash starting"
   block:
@@ -66,7 +63,7 @@
       ansible.builtin.template:
         src: "templates/logstash.yml.j2"
         dest: "{{ install_logstash_config_path }}/logstash.yml"
-        mode: "0770"
+        mode: "0700"
         group: "{{ install_logstash_group }}"
         owner: "{{ install_logstash_user }}"
         lstrip_blocks: yes
@@ -80,13 +77,13 @@
         recurse: yes
         group: "{{ install_logstash_group }}"
         owner: "{{ install_logstash_user }}"
-        mode: "0770"
+        mode: "0700"
 
     - name: "Import Logstash options for JVM"
       ansible.builtin.template:
         src: "templates/jvm.options.j2"
         dest: "{{ install_logstash_config_path }}/jvm.options"
-        mode: "0770"
+        mode: "0700"
         group: "{{ install_logstash_group }}"
         owner: "{{ install_logstash_user }}"
         lstrip_blocks: yes
@@ -95,7 +92,7 @@
       ansible.builtin.template:
         src: "templates/pipelines.yml.j2"
         dest: "{{ install_logstash_config_path }}/pipelines.yml"
-        mode: "0770"
+        mode: "0700"
         group: "{{ install_logstash_group }}"
         owner: "{{ install_logstash_user }}"
         lstrip_blocks: yes
@@ -112,6 +109,7 @@
           loop: "{{ folders.files }}"
           loop_control:
             loop_var: file
+          when: "file.path.split('/')[-1] not in install_logstash_pipelines | map(attribute='name') | list"
           ansible.builtin.file:
             path: "{{ file.path }}"
             state: absent
@@ -131,7 +129,7 @@
         ansible.builtin.file:
           path: "{{ install_logstash_api_jks }}"
           state: absent
-          mode: "0770"
+          mode: "0700"
           group: "{{ install_logstash_group }}"
           owner: "{{ install_logstash_user }}"
 
@@ -153,7 +151,6 @@
 
 - name: "Import all Logstash pipelines"
   notify: 
-    - "Set Logstash permissions"
     - "Restart Logstash"
     - "Delay Logstash starting"
   block:
@@ -175,3 +172,22 @@
         loop_var: pipeline
       ansible.builtin.include_tasks:
         file: "import_pipeline.yml"
+
+- name: "Set Logstash permissions"
+  loop:
+    - "/tmp/logstash"
+    - "{{ install_logstash_data_path }}"
+    - "/var/log/logstash"
+    - "/usr/share/logstash"
+    - "/etc/logstash"
+  loop_control:
+    loop_var: path
+  register: output
+  changed_when: output.size < 0
+  ansible.builtin.file:
+    path: "{{ path }}"
+    recurse: yes
+    mode: "0700"
+    group: "{{ install_logstash_group }}"
+    owner: "{{ install_logstash_user }}"
+    state: directory

@@ -1,20 +1,4 @@
 ---
-- name: "Set Logstash permissions"
-  loop:
-    - "/tmp/logstash"
-    - "{{ install_logstash_data_path }}"
-    - "/var/log/logstash"
-    - "/usr/share/logstash"
-    - "/etc/logstash"
-  loop_control:
-    loop_var: path
-  ansible.builtin.file:
-    path: "{{ path }}"
-    recurse: yes
-    mode: "0770"
-    group: "{{ install_logstash_group }}"
-    owner: "{{ install_logstash_user }}"
-
 - name: "Enable and start Logstash"
   register: install_logstash_service_status
   changed_when: not install_logstash_service_status.state != "started"
