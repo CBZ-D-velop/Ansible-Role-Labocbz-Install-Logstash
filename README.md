@@ -162,6 +162,14 @@ install_logstash_host: "0.0.0.0"
 install_logstash_port: 5044
 install_logstash_loglevel: "info"
 
+install_logstash_ssl_elastic: true
+install_logstash_ssl_elastic_jks: "{{ install_logstash_ssl_path }}/{{ install_logstash_cluster_name }}/{{ install_logstash_cluster_name }}.jks"
+install_logstash_ssl_elastic_jks_password: "My3DD4fndfjff"
+install_logstash_ssl_elastic_key: "{{ install_logstash_ssl_path }}/{{ install_logstash_cluster_name }}/{{ install_logstash_cluster_name }}.key"
+install_logstash_ssl_elastic_crt: "{{ install_logstash_ssl_path }}/{{ install_logstash_cluster_name }}/{{ install_logstash_cluster_name }}.pem.crt"
+install_logstash_ssl_elastic_p12: "{{ install_logstash_ssl_path }}/{{ install_logstash_cluster_name }}/{{ install_logstash_cluster_name }}.p12"
+install_logstash_ssl_elastic_p8: "{{ install_logstash_ssl_path }}/{{ install_logstash_cluster_name }}/{{ install_logstash_cluster_name }}.pkcs8.p8"
+
 install_logstash_cluster_name: "my.logstash-cluster.tld"
 install_logstash_client_auth: true
 install_logstash_ssl_crt: "/etc/ssl/cert.crt"
@@ -193,9 +201,9 @@ In order to surchage vars, you have multiples possibilities but for mains cases 
 ```YAML
 # From inventory
 ---
-inv_prepare_host_users:
-  - login: "elastic"
-    group: "elastic"
+inv_prepare_host_system_users:
+  - login: "elasticsearch"
+    group: "elasticsearch"
   - login: "logstash"
     group: "logstash"
 
@@ -206,15 +214,15 @@ inv_install_logstash_pipelines_path: "{{ inv_install_logstash_config_path }}/pip
 inv_install_logstash_pipelines_reload: "5s"
 
 inv_install_logstash_pipelines:
-  - name: "main"
+  - name: "apache2"
     workers: 1
     beats:
       - 5045
-  - name: "main2"
+  - name: "fail2ban"
     workers: 1
     beats:
       - 5046
-  - name: "main3"
+  - name: "logstash"
     workers: 1
     beats:
       - 5047
@@ -246,6 +254,14 @@ inv_install_logstash_ssl_key: "{{ inv_install_logstash_ssl_path }}/{{ inv_instal
 inv_install_logstash_ssl_crt: "{{ inv_install_logstash_ssl_path }}/{{ inv_install_logstash_cluster_name }}/{{ inv_install_logstash_cluster_name }}.pem.crt"
 inv_install_logstash_ssl_p8: "{{ inv_install_logstash_ssl_path }}/{{ inv_install_logstash_cluster_name }}/{{ inv_install_logstash_cluster_name }}.pkcs8.p8"
 
+inv_install_logstash_ssl_elastic: true
+inv_install_logstash_ssl_elastic_jks: "{{ inv_install_logstash_ssl_path }}/{{ inv_install_logstash_cluster_name }}/{{ inv_install_logstash_cluster_name }}.jks"
+inv_install_logstash_ssl_elastic_jks_password: "My3DD4fndfjff"
+inv_install_logstash_ssl_elastic_key: "{{ inv_install_logstash_ssl_path }}/{{ inv_install_logstash_cluster_name }}/{{ inv_install_logstash_cluster_name }}.key"
+inv_install_logstash_ssl_elastic_crt: "{{ inv_install_logstash_ssl_path }}/{{ inv_install_logstash_cluster_name }}/{{ inv_install_logstash_cluster_name }}.pem.crt"
+inv_install_logstash_ssl_elastic_p12: "{{ inv_install_logstash_ssl_path }}/{{ inv_install_logstash_cluster_name }}/{{ inv_install_logstash_cluster_name }}.p12"
+inv_install_logstash_ssl_elastic_p8: "{{ inv_install_logstash_ssl_path }}/{{ inv_install_logstash_cluster_name }}/{{ inv_install_logstash_cluster_name }}.pkcs8.p8"
+
 inv_install_logstash_host: "0.0.0.0"
 inv_install_logstash_client_auth: true
 inv_install_logstash_beat_ssl_crt: "{{ inv_install_logstash_ssl_path }}/{{ inv_install_logstash_cluster_name }}/{{ inv_install_logstash_cluster_name }}.pem.crt"
@@ -259,17 +275,15 @@ inv_install_logstash_data_path: "/var/lib/logstash/data"
 inv_install_logstash_group: "logstash"
 inv_install_logstash_user: "logstash"
 inv_install_logstash_ram: "1g"
-inv_install_logstash_loglevel: "debug"
+inv_install_logstash_loglevel: "info"
 
-inv_install_logstash_elasticsearch_shard: 3
+inv_install_logstash_elasticsearch_shard: 1
 inv_install_logstash_elasticsearch_ssl: true
 inv_install_logstash_elasticsearch_client_auth: true
 inv_install_logstash_elasticsearch_login: "elastic"
 inv_install_logstash_elasticsearch_password: "myVeryStringP@ssword"
 inv_install_logstash_elasticsearch_hosts:
   - "molecule-local-instance-1-install-logstash:9200"
-  - "molecule-local-instance-2-install-logstash:9200"
-  - "molecule-local-instance-3-install-logstash:9200"
 
 ```
 
@@ -284,48 +298,55 @@ all vars from to put/from AWX / Tower
 To run this role, you can copy the molecule/default/converge.yml playbook and add it into your playbook:
 
 ```YAML
-  - name: "Include labocbz.install_logstash"
-    tags:
-      - "labocbz.install_logstash"
-    vars:
-      install_logstash_major_version: "{{ inv_install_logstash_major_version }}"
-      install_logstash_config_path: "{{ inv_install_logstash_config_path }}"
-      install_logstash_ssl_path: "{{ inv_install_logstash_ssl_path }}"
-      install_logstash_pipelines_path: "{{ inv_install_logstash_pipelines_path }}"
-      install_logstash_pipelines_reload: "{{ inv_install_logstash_pipelines_reload }}"
-      install_logstash_pipelines: "{{ inv_install_logstash_pipelines }}"
-      install_logstash_health_check_pipeline: "{{ inv_install_logstash_health_check_pipeline }}"
-      install_logstash_api: "{{ inv_install_logstash_api }}"
-      install_logstash_api_ports: "{{ inv_install_logstash_api_ports }}"
-      install_logstash_api_auth_type: "{{ inv_install_logstash_api_auth_type }}"
-      install_logstash_api_auth_login: "{{ inv_install_logstash_api_auth_login }}"
-      install_logstash_api_auth_password: "{{ inv_install_logstash_api_auth_password }}"
-      install_logstash_host: "{{ inv_install_logstash_host }}"
-      install_logstash_cluster_name: "{{ inv_install_logstash_cluster_name }}"
-      install_logstash_data_path: "{{ inv_install_logstash_data_path }}"
-      install_logstash_group: "{{ inv_install_logstash_group }}"
-      install_logstash_user: "{{ inv_install_logstash_user }}"
-      install_logstash_ram: "{{ inv_install_logstash_ram }}"
-      install_logstash_api_ssl: "{{ inv_install_logstash_api_ssl }}"
-      install_logstash_api_jks: "{{ inv_install_logstash_api_jks }}"
-      install_logstash_api_jks_password: "{{ inv_install_logstash_api_jks_password }}"
-      install_logstash_beats_ssl: "{{ inv_install_logstash_beats_ssl }}"
-      install_logstash_client_auth: "{{ inv_install_logstash_client_auth }}"
-      install_logstash_ssl_authorities: "{{ inv_install_logstash_ssl_authorities }}"
-      install_logstash_distributor_pipeline: "{{ inv_install_logstash_distributor_pipeline }}"
-      install_logstash_ssl_crt: "{{ inv_install_logstash_ssl_crt }}"
-      install_logstash_ssl_key: "{{ inv_install_logstash_ssl_key }}"
-      install_logstash_api_p12: "{{ inv_install_logstash_api_p12 }}"
-      install_logstash_ssl_p8: "{{ inv_install_logstash_ssl_p8 }}"
-      install_logstash_loglevel: "{{ inv_install_logstash_loglevel }}"
-      install_logstash_elasticsearch_shard: "{{ inv_install_logstash_elasticsearch_shard }}"
-      install_logstash_elasticsearch_ssl: "{{ inv_install_logstash_elasticsearch_ssl }}"
-      install_logstash_elasticsearch_login: "{{ inv_install_logstash_elasticsearch_login }}"
-      install_logstash_elasticsearch_password: "{{ inv_install_logstash_elasticsearch_password }}"
-      install_logstash_elasticsearch_hosts: "{{ inv_install_logstash_elasticsearch_hosts }}"
-      install_logstash_elasticsearch_client_auth: "{{ inv_install_logstash_elasticsearch_client_auth }}"
-    ansible.builtin.include_role:
-      name: "labocbz.install_logstash"
+- name: "Include labocbz.install_logstash"
+  tags:
+    - "labocbz.install_logstash"
+  vars:
+    install_logstash_major_version: "{{ inv_install_logstash_major_version }}"
+    install_logstash_config_path: "{{ inv_install_logstash_config_path }}"
+    install_logstash_ssl_path: "{{ inv_install_logstash_ssl_path }}"
+    install_logstash_pipelines_path: "{{ inv_install_logstash_pipelines_path }}"
+    install_logstash_pipelines_reload: "{{ inv_install_logstash_pipelines_reload }}"
+    install_logstash_pipelines: "{{ inv_install_logstash_pipelines }}"
+    install_logstash_health_check_pipeline: "{{ inv_install_logstash_health_check_pipeline }}"
+    install_logstash_api: "{{ inv_install_logstash_api }}"
+    install_logstash_api_ports: "{{ inv_install_logstash_api_ports }}"
+    install_logstash_api_auth_type: "{{ inv_install_logstash_api_auth_type }}"
+    install_logstash_api_auth_login: "{{ inv_install_logstash_api_auth_login }}"
+    install_logstash_api_auth_password: "{{ inv_install_logstash_api_auth_password }}"
+    install_logstash_host: "{{ inv_install_logstash_host }}"
+    install_logstash_cluster_name: "{{ inv_install_logstash_cluster_name }}"
+    install_logstash_data_path: "{{ inv_install_logstash_data_path }}"
+    install_logstash_group: "{{ inv_install_logstash_group }}"
+    install_logstash_user: "{{ inv_install_logstash_user }}"
+    install_logstash_ram: "{{ inv_install_logstash_ram }}"
+    install_logstash_api_ssl: "{{ inv_install_logstash_api_ssl }}"
+    install_logstash_api_jks: "{{ inv_install_logstash_api_jks }}"
+    install_logstash_api_jks_password: "{{ inv_install_logstash_api_jks_password }}"
+    install_logstash_beats_ssl: "{{ inv_install_logstash_beats_ssl }}"
+    install_logstash_client_auth: "{{ inv_install_logstash_client_auth }}"
+    install_logstash_ssl_authorities: "{{ inv_install_logstash_ssl_authorities }}"
+    install_logstash_distributor_pipeline: "{{ inv_install_logstash_distributor_pipeline }}"
+    install_logstash_ssl_crt: "{{ inv_install_logstash_ssl_crt }}"
+    install_logstash_ssl_key: "{{ inv_install_logstash_ssl_key }}"
+    install_logstash_api_p12: "{{ inv_install_logstash_api_p12 }}"
+    install_logstash_ssl_p8: "{{ inv_install_logstash_ssl_p8 }}"
+    install_logstash_loglevel: "{{ inv_install_logstash_loglevel }}"
+    install_logstash_elasticsearch_shard: "{{ inv_install_logstash_elasticsearch_shard }}"
+    install_logstash_elasticsearch_ssl: "{{ inv_install_logstash_elasticsearch_ssl }}"
+    install_logstash_elasticsearch_login: "{{ inv_install_logstash_elasticsearch_login }}"
+    install_logstash_elasticsearch_password: "{{ inv_install_logstash_elasticsearch_password }}"
+    install_logstash_elasticsearch_hosts: "{{ inv_install_logstash_elasticsearch_hosts }}"
+    install_logstash_elasticsearch_client_auth: "{{ inv_install_logstash_elasticsearch_client_auth }}"
+    install_logstash_ssl_elastic: "{{ inv_install_logstash_ssl_elastic }}"
+    install_logstash_ssl_elastic_jks: "{{ inv_install_logstash_ssl_elastic_jks }}"
+    install_logstash_ssl_elastic_jks_password: "{{ inv_install_logstash_ssl_elastic_jks_password }}"
+    install_logstash_ssl_elastic_key: "{{ inv_install_logstash_ssl_elastic_key }}"
+    install_logstash_ssl_elastic_crt: "{{ inv_install_logstash_ssl_elastic_crt }}"
+    install_logstash_ssl_elastic_p12: "{{ inv_install_logstash_ssl_elastic_p12 }}"
+    install_logstash_ssl_elastic_p8: "{{ inv_install_logstash_ssl_elastic_p8 }}"
+  ansible.builtin.include_role:
+    name: "labocbz.install_logstash"
 ```
 
 ## Architectural Decisions Records
@@ -370,6 +391,11 @@ Here you can put your change to keep a trace of your work and decisions.
 ### 2023-12-15: System users
 
 * Role can now use system users and address groups
+
+### 2023-12-27: Template and fixes
+
+* Index templates now fixed
+* Role is working, tested in ELK integration
 
 ## Authors
 

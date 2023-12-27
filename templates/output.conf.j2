@@ -18,12 +18,12 @@ output {
     ssl_enabled => true
     {% endif %}
     {% if install_logstash_elasticsearch_client_auth %}
-    ssl_certificate => "{{ install_logstash_ssl_crt }}"
-    ssl_key => "{{ install_logstash_ssl_p8 }}"
+    ssl_certificate => "{{ install_logstash_ssl_elastic_crt }}"
+    ssl_key => "{{ install_logstash_ssl_elastic_p8 }}"
     ssl_verification_mode => full
     {% endif %}
     {% if install_logstash_elasticsearch_client_auth or install_logstash_elasticsearch_ssl %}
-    cacert => "{{ install_logstash_ssl_authorities }}"
+    ssl_certificate_authorities => ["{{ install_logstash_ssl_elastic_authorities }}"]
     {% endif %}
     sniffing => false
     pipeline => "{{ pipeline.name }}"

@@ -1,10 +1,16 @@
+##############################
+#                            #
+# Ansible / Tower managed on #
+#                            #
+##############################
+
 [Unit]
 Description=logstash
 
 [Service]
 Type=simple
-User=logstash
-Group=logstash
+User={{ install_logstash_user }}
+Group={{ install_logstash_group }}
 # Load env vars from /etc/default/ and /etc/sysconfig/ if they exist.
 # Prefixing the path with '-' makes it try to load, but if the file doesn't
 # exist, it continues onward.

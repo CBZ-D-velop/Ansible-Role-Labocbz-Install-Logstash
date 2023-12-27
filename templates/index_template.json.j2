@@ -1,6 +1,9 @@
 {
-  "template": "logs-*-{{ pipeline.name }}-*",
-  "settings": {
-    "number_of_shards": {{ install_logstash_elasticsearch_shard }}
-  },
+  "index_patterns" : ["logs-*-{{ pipeline.name }}-*"],
+  "template": {
+    "settings" : {
+      "number_of_shards" : {{ install_logstash_elasticsearch_shard }},
+      "number_of_replicas" : {{ install_logstash_elasticsearch_shard }}
+    }
+  }
 }
