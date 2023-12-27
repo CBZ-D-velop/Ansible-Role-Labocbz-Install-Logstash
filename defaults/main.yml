@@ -46,6 +46,15 @@ install_logstash_host: "0.0.0.0"
 install_logstash_port: 5044
 install_logstash_loglevel: "info"
 
+install_logstash_ssl_elastic: true
+install_logstash_ssl_elastic_jks: "{{ install_logstash_ssl_path }}/{{ install_logstash_cluster_name }}/{{ install_logstash_cluster_name }}.jks"
+install_logstash_ssl_elastic_jks_password: "My3DD4fndfjff"
+install_logstash_ssl_elastic_key: "{{ install_logstash_ssl_path }}/{{ install_logstash_cluster_name }}/{{ install_logstash_cluster_name }}.pem.key"
+install_logstash_ssl_elastic_crt: "{{ install_logstash_ssl_path }}/{{ install_logstash_cluster_name }}/{{ install_logstash_cluster_name }}.pem.crt"
+install_logstash_ssl_elastic_p12: "{{ install_logstash_ssl_path }}/{{ install_logstash_cluster_name }}/{{ install_logstash_cluster_name }}.p12"
+install_logstash_ssl_elastic_p8: "{{ install_logstash_ssl_path }}/{{ install_logstash_cluster_name }}/{{ install_logstash_cluster_name }}.pkcs8.p8"
+install_logstash_ssl_elastic_authorities: "{{ inv_install_logstash_ssl_path }}/{{ install_logstash_cluster_name }}/ca-chain.pem.crt"
+
 install_logstash_cluster_name: "my.logstash-cluster.tld"
 install_logstash_client_auth: true
 install_logstash_ssl_crt: "/etc/ssl/cert.crt"

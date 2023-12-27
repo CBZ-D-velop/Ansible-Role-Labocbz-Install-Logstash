@@ -52,6 +52,15 @@ inv_install_logstash_ssl_key: "{{ inv_install_logstash_ssl_path }}/{{ inv_instal
 inv_install_logstash_ssl_crt: "{{ inv_install_logstash_ssl_path }}/{{ inv_install_logstash_cluster_name }}/{{ inv_install_logstash_cluster_name }}.pem.crt"
 inv_install_logstash_ssl_p8: "{{ inv_install_logstash_ssl_path }}/{{ inv_install_logstash_cluster_name }}/{{ inv_install_logstash_cluster_name }}.pkcs8.p8"
 
+inv_install_logstash_ssl_elastic: true
+inv_install_logstash_ssl_elastic_jks: "{{ inv_install_logstash_ssl_path }}/{{ inv_install_logstash_cluster_name }}/{{ inv_install_logstash_cluster_name }}.jks"
+inv_install_logstash_ssl_elastic_jks_password: "My3DD4fndfjff"
+inv_install_logstash_ssl_elastic_key: "{{ inv_install_logstash_ssl_path }}/{{ inv_install_logstash_cluster_name }}/{{ inv_install_logstash_cluster_name }}.pem.key"
+inv_install_logstash_ssl_elastic_crt: "{{ inv_install_logstash_ssl_path }}/{{ inv_install_logstash_cluster_name }}/{{ inv_install_logstash_cluster_name }}.pem.crt"
+inv_install_logstash_ssl_elastic_p12: "{{ inv_install_logstash_ssl_path }}/{{ inv_install_logstash_cluster_name }}/{{ inv_install_logstash_cluster_name }}.p12"
+inv_install_logstash_ssl_elastic_p8: "{{ inv_install_logstash_ssl_path }}/{{ inv_install_logstash_cluster_name }}/{{ inv_install_logstash_cluster_name }}.pkcs8.p8"
+inv_install_logstash_ssl_elastic_authorities: "{{ inv_install_logstash_ssl_path }}/{{ install_logstash_cluster_name }}/ca-chain.pem.crt"
+
 inv_install_logstash_host: "0.0.0.0"
 inv_install_logstash_client_auth: true
 inv_install_logstash_beat_ssl_crt: "{{ inv_install_logstash_ssl_path }}/{{ inv_install_logstash_cluster_name }}/{{ inv_install_logstash_cluster_name }}.pem.crt"
