@@ -9,16 +9,16 @@ Description=logstash
 
 [Service]
 Type=simple
-User={{ install_logstash_user }}
-Group={{ install_logstash_group }}
+User={{ install_logstash__user }}
+Group={{ install_logstash__group }}
 # Load env vars from /etc/default/ and /etc/sysconfig/ if they exist.
 # Prefixing the path with '-' makes it try to load, but if the file doesn't
 # exist, it continues onward.
 EnvironmentFile=-/etc/default/logstash
 EnvironmentFile=-/etc/sysconfig/logstash
-ExecStart=/usr/share/logstash/bin/logstash "--path.settings" "{{ install_logstash_config_path }}"
+ExecStart=/usr/share/logstash/bin/logstash "--path.settings" "{{ install_logstash__config_path }}"
 Restart=always
-WorkingDirectory={{ install_logstash_data_path }}
+WorkingDirectory={{ install_logstash__data_path }}
 Nice=19
 LimitNOFILE=16384
 

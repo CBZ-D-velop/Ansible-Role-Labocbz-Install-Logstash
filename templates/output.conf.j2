@@ -6,24 +6,24 @@
 
 output {
   elasticsearch {
-    hosts => [{% for host in install_logstash_elasticsearch_hosts %}"{% if install_logstash_elasticsearch_ssl %}https://{% else %}http://{% endif %}{{ host }}"{% if not loop.last %},{% endif %}{% endfor %}]
-    user => "{{ install_logstash_elasticsearch_login }}"
-    password => "{{ install_logstash_elasticsearch_password }}"
+    hosts => [{% for host in install_logstash__elasticsearch_hosts %}"{% if install_logstash__elasticsearch_ssl %}https://{% else %}http://{% endif %}{{ host }}"{% if not loop.last %},{% endif %}{% endfor %}]
+    user => "{{ install_logstash__elasticsearch_login }}"
+    password => "{{ install_logstash__elasticsearch_password }}"
     index => "logs-%{[fields][env]}-{{ pipeline.name }}-%{+YYYY.MM.dd}"
     manage_template => true
-    template => "{{ install_logstash_pipelines_path }}/{{ pipeline.name }}/template.json"
+    template => "{{ install_logstash__pipelines_path }}/{{ pipeline.name }}/template.json"
     template_name => "{{ pipeline.name }}"
     template_overwrite => true
-    {% if install_logstash_elasticsearch_ssl %}
+    {% if install_logstash__elasticsearch_ssl %}
     ssl_enabled => true
     {% endif %}
-    {% if install_logstash_elasticsearch_client_auth %}
-    ssl_certificate => "{{ install_logstash_ssl_elastic_crt }}"
-    ssl_key => "{{ install_logstash_ssl_elastic_p8 }}"
+    {% if install_logstash__elasticsearch_client_auth %}
+    ssl_certificate => "{{ install_logstash__ssl_elastic_crt }}"
+    ssl_key => "{{ install_logstash__ssl_elastic_p8 }}"
     ssl_verification_mode => full
     {% endif %}
-    {% if install_logstash_elasticsearch_client_auth or install_logstash_elasticsearch_ssl %}
-    ssl_certificate_authorities => ["{{ install_logstash_ssl_elastic_authorities }}"]
+    {% if install_logstash__elasticsearch_client_auth or install_logstash__elasticsearch_ssl %}
+    ssl_certificate_authorities => ["{{ install_logstash__ssl_elastic_authorities }}"]
     {% endif %}
     sniffing => false
     pipeline => "{{ pipeline.name }}"

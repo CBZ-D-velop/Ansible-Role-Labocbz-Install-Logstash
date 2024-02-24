@@ -1,0 +1,85 @@
+---
+inv_prepare_host__system_users:
+  - login: "elasticsearch"
+    group: "elasticsearch"
+  - login: "logstash"
+    group: "logstash"
+
+inv_install_logstash__major_version: 8
+inv_install_logstash__config_path: "/etc/logstash"
+inv_install_logstash__ssl_path: "{{ inv_install_logstash__config_path }}/ssl"
+inv_install_logstash__pipelines_path: "{{ inv_install_logstash__config_path }}/pipelines"
+inv_install_logstash__pipelines_reload: "5s"
+
+inv_install_logstash__pipelines:
+  - name: "apache2"
+    workers: 1
+    beats:
+      - 5045
+  - name: "fail2ban"
+    workers: 1
+    beats:
+      - 5046
+  - name: "logstash"
+    workers: 1
+    beats:
+      - 5047
+
+inv_install_logstash__health_check_pipeline:
+  name: "health"
+  workers: 1
+  beats: 
+    - 5043
+
+inv_install_logstash__distributor_pipeline:
+  name: "distributor"
+  workers: 5
+  beats: 
+    - 5044
+
+inv_install_logstash__beats_ssl: true
+
+inv_install_logstash__api: true
+inv_install_logstash__api_ports: "9600"
+inv_install_logstash__api_auth_type: "basic"
+inv_install_logstash__api_auth_login: "admin"
+inv_install_logstash__api_auth_password: "s3cUreP4$$w0rD"
+inv_install_logstash__api_ssl: true
+inv_install_logstash__api_jks: "{{ inv_install_logstash__ssl_path }}/{{ inv_install_logstash__cluster_name }}/{{ inv_install_logstash__cluster_name }}.jks"
+inv_install_logstash__api_jks_password: "My3DD4fndfjff"
+inv_install_logstash__api_p12: "{{ inv_install_logstash__ssl_path }}/{{ inv_install_logstash__cluster_name }}/{{ inv_install_logstash__cluster_name }}.p12"
+inv_install_logstash__ssl_key: "{{ inv_install_logstash__ssl_path }}/{{ inv_install_logstash__cluster_name }}/{{ inv_install_logstash__cluster_name }}.pem.key"
+inv_install_logstash__ssl_crt: "{{ inv_install_logstash__ssl_path }}/{{ inv_install_logstash__cluster_name }}/{{ inv_install_logstash__cluster_name }}.pem.crt"
+inv_install_logstash__ssl_p8: "{{ inv_install_logstash__ssl_path }}/{{ inv_install_logstash__cluster_name }}/{{ inv_install_logstash__cluster_name }}.pkcs8.p8"
+
+inv_install_logstash__ssl_elastic: true
+inv_install_logstash__ssl_elastic_jks: "{{ inv_install_logstash__ssl_path }}/{{ inv_install_logstash__cluster_name }}/{{ inv_install_logstash__cluster_name }}.jks"
+inv_install_logstash__ssl_elastic_jks_password: "My3DD4fndfjff"
+inv_install_logstash__ssl_elastic_key: "{{ inv_install_logstash__ssl_path }}/{{ inv_install_logstash__cluster_name }}/{{ inv_install_logstash__cluster_name }}.pem.key"
+inv_install_logstash__ssl_elastic_crt: "{{ inv_install_logstash__ssl_path }}/{{ inv_install_logstash__cluster_name }}/{{ inv_install_logstash__cluster_name }}.pem.crt"
+inv_install_logstash__ssl_elastic_p12: "{{ inv_install_logstash__ssl_path }}/{{ inv_install_logstash__cluster_name }}/{{ inv_install_logstash__cluster_name }}.p12"
+inv_install_logstash__ssl_elastic_p8: "{{ inv_install_logstash__ssl_path }}/{{ inv_install_logstash__cluster_name }}/{{ inv_install_logstash__cluster_name }}.pkcs8.p8"
+inv_install_logstash__ssl_elastic_authorities: "{{ inv_install_logstash__ssl_path }}/{{ install_logstash__cluster_name }}/ca-chain.pem.crt"
+
+inv_install_logstash__host: "0.0.0.0"
+inv_install_logstash__client_auth: true
+inv_install_logstash__beat_ssl_crt: "{{ inv_install_logstash__ssl_path }}/{{ inv_install_logstash__cluster_name }}/{{ inv_install_logstash__cluster_name }}.pem.crt"
+inv_install_logstash__beat_ssl_key: "{{ inv_install_logstash__ssl_path }}/{{ inv_install_logstash__cluster_name }}/{{ inv_install_logstash__cluster_name }}.pem.key"
+inv_install_logstash__ssl_authorities: "{{ inv_install_logstash__ssl_path }}/{{ inv_install_logstash__cluster_name }}/ca-chain.pem.crt"
+
+inv_install_logstash__cluster_name: "my-logstash-server.domain.tld"
+
+inv_install_logstash__data_path: "/var/lib/logstash/data"
+
+inv_install_logstash__group: "logstash"
+inv_install_logstash__user: "logstash"
+inv_install_logstash__ram: "1g"
+inv_install_logstash__loglevel: "info"
+
+inv_install_logstash__elasticsearch_shard: 1
+inv_install_logstash__elasticsearch_ssl: true
+inv_install_logstash__elasticsearch_client_auth: true
+inv_install_logstash__elasticsearch_login: "elastic"
+inv_install_logstash__elasticsearch_password: "myVeryStringP@ssword"
+#inv_install_logstash__elasticsearch_hosts:
+#  - "molecule-local-instance-1-install-logstash:9200"

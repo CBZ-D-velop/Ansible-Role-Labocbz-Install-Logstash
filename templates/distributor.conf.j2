@@ -9,14 +9,14 @@
 input {
     beats {
         port => "{{ beat }}"
-        {% if install_logstash_beats_ssl | default(false) %}
+        {% if install_logstash__beats_ssl | default(false) %}
         ssl_enabled => true
-        ssl_certificate => "{{ install_logstash_ssl_crt }}"
-        ssl_key => "{{ install_logstash_ssl_key }}"
+        ssl_certificate => "{{ install_logstash__ssl_crt }}"
+        ssl_key => "{{ install_logstash__ssl_key }}"
         {% endif %}
-        {% if install_logstash_client_auth | default(false) %}
+        {% if install_logstash__client_auth | default(false) %}
         ssl_client_authentication => required
-        ssl_certificate_authorities => ["{{ install_logstash_ssl_authorities }}"]
+        ssl_certificate_authorities => ["{{ install_logstash__ssl_authorities }}"]
         {% endif %}
     }
 }
@@ -24,7 +24,7 @@ input {
 {% endif %}
 
 output {
-{% for pipeline in install_logstash_pipelines %}
+{% for pipeline in install_logstash__pipelines %}
     if [pipeline_name] == "{{ pipeline.name }}" {
         pipeline { send_to => {{ pipeline.name }} }
     }
