@@ -29,9 +29,9 @@ node.name: "{{ inventory_hostname }}"
 # ------------ Data path ------------------
 #
 # Which directory should be used by logstash and its plugins
-# for any persistent needs. Defaults to install_logstash_HOME/data
+# for any persistent needs. Defaults to install_logstash__HOME/data
 #
-path.data: "{{ install_logstash_data_path }}"
+path.data: "{{ install_logstash__data_path }}"
 #
 # ------------ Pipeline Settings --------------
 #
@@ -110,7 +110,7 @@ config.reload.automatic: true
 # are treated as nanoseconds.
 # Setting the interval this way is not recommended and might change in later versions.
 #
-config.reload.interval: "{{ install_logstash_pipelines_reload }}"
+config.reload.interval: "{{ install_logstash__pipelines_reload }}"
 #
 # Show fully compiled configuration as debug log message
 # NOTE: --log.level must be 'debug'
@@ -128,7 +128,7 @@ config.reload.interval: "{{ install_logstash_pipelines_reload }}"
 # The HTTP API is enabled by default. It can be disabled, but features that rely
 # on it will not work as intended.
 #
-api.enabled: {{ install_logstash_api | default(false) }}
+api.enabled: {{ install_logstash__api | default(false) }}
 #
 # By default, the HTTP API is not secured and is therefore bound to only the
 # host's loopback interface, ensuring that it is not accessible to the rest of
@@ -136,13 +136,13 @@ api.enabled: {{ install_logstash_api | default(false) }}
 # When secured with SSL and Basic Auth, the API is bound to _all_ interfaces
 # unless configured otherwise.
 #
-api.http.host: "{{ install_logstash_host }}"
+api.http.host: "{{ install_logstash__host }}"
 #
 # The HTTP API web server will listen on an available port from the given range.
 # Values can be specified as a single port (e.g., `9600`), or an inclusive range
 # of ports (e.g., `9600-9700`).
 #
-api.http.port: {{ install_logstash_api_ports }}
+api.http.port: {{ install_logstash__api_ports }}
 #
 # The HTTP API includes a customizable "environment" value in its response,
 # which can be configured here.
@@ -152,10 +152,10 @@ api.environment: "production"
 # The HTTP API can be secured with SSL (TLS). To do so, you will need to provide
 # the path to a password-protected keystore in p12 or jks format, along with credentials.
 #
-{% if install_logstash_api_ssl | default(false) %}
-api.ssl.enabled: {{ install_logstash_api_ssl }}
-api.ssl.keystore.path: "{{ install_logstash_api_jks }}"
-api.ssl.keystore.password: "{{ install_logstash_api_jks_password }}"
+{% if install_logstash__api_ssl | default(false) %}
+api.ssl.enabled: {{ install_logstash__api_ssl }}
+api.ssl.keystore.path: "{{ install_logstash__api_jks }}"
+api.ssl.keystore.password: "{{ install_logstash__api_jks_password }}"
 {% endif %}
 # api.ssl.enabled: false
 # api.ssl.keystore.path: /path/to/keystore.jks
@@ -165,7 +165,7 @@ api.ssl.keystore.password: "{{ install_logstash_api_jks_password }}"
 #  - `none`:  no auth is required (default)
 #  - `basic`: clients must authenticate with HTTP Basic auth, as configured
 #             with `api.auth.basic.*` options below
-api.auth.type: "{{ install_logstash_api_auth_type }}"
+api.auth.type: "{{ install_logstash__api_auth_type }}"
 #
 # When configured with `api.auth.type` `basic`, you must provide the credentials
 # that requests will be validated against. Usage of Environment or Keystore
@@ -175,9 +175,9 @@ api.auth.type: "{{ install_logstash_api_auth_type }}"
 #
 # api.auth.basic.username: "logstash-user"
 # api.auth.basic.password: "s3cUreP4$$w0rD"
-{% if ( install_logstash_api_auth_type | default(false) ) == "basic" %}
-api.auth.basic.username: "{{ install_logstash_api_auth_login }}"
-api.auth.basic.password: "{{ install_logstash_api_auth_password }}"
+{% if ( install_logstash__api_auth_type | default(false) ) == "basic" %}
+api.auth.basic.username: "{{ install_logstash__api_auth_login }}"
+api.auth.basic.password: "{{ install_logstash__api_auth_password }}"
 api.auth.basic.password_policy.mode: WARN
 {% endif %}
 #
@@ -318,7 +318,7 @@ api.auth.basic.password_policy.mode: WARN
 #   * debug
 #   * trace
 #
-log.level: "{{ install_logstash_loglevel }}"
+log.level: "{{ install_logstash__loglevel }}"
 path.logs: "/var/log/logstash"
 #
 # ------------ Other Settings --------------
@@ -338,13 +338,13 @@ path.logs: "/var/log/logstash"
 # X-Pack Monitoring
 # https://www.elastic.co/guide/en/logstash/current/monitoring-logstash.html
 #xpack.monitoring.enabled: false
-#xpack.monitoring.elasticsearch.username: install_logstash_system
+#xpack.monitoring.elasticsearch.username: install_logstash__system
 #xpack.monitoring.elasticsearch.password: password
 #xpack.monitoring.elasticsearch.proxy: ["http://proxy:port"]
 #xpack.monitoring.elasticsearch.hosts: ["https://es1:9200", "https://es2:9200"]
 # an alternative to hosts + username/password settings is to use cloud_id/cloud_auth
 #xpack.monitoring.elasticsearch.cloud_id: monitoring_cluster_id:xxxxxxxxxx
-#xpack.monitoring.elasticsearch.cloud_auth: install_logstash_system:password
+#xpack.monitoring.elasticsearch.cloud_auth: install_logstash__system:password
 # another authentication alternative is to use an Elasticsearch API key
 #xpack.monitoring.elasticsearch.api_key: "id:api_key"
 #xpack.monitoring.elasticsearch.ssl.certificate_authority: "/path/to/ca.crt"
@@ -366,13 +366,13 @@ path.logs: "/var/log/logstash"
 # https://www.elastic.co/guide/en/logstash/current/logstash-centralized-pipeline-management.html
 #xpack.management.enabled: false
 #xpack.management.pipeline.id: ["main", "apache_logs"]
-#xpack.management.elasticsearch.username: install_logstash_admin_user
+#xpack.management.elasticsearch.username: install_logstash__admin_user
 #xpack.management.elasticsearch.password: password
 #xpack.management.elasticsearch.proxy: ["http://proxy:port"]
 #xpack.management.elasticsearch.hosts: ["https://es1:9200", "https://es2:9200"]
 # an alternative to hosts + username/password settings is to use cloud_id/cloud_auth
 #xpack.management.elasticsearch.cloud_id: management_cluster_id:xxxxxxxxxx
-#xpack.management.elasticsearch.cloud_auth: install_logstash_admin_user:password
+#xpack.management.elasticsearch.cloud_auth: install_logstash__admin_user:password
 # another authentication alternative is to use an Elasticsearch API key
 #xpack.management.elasticsearch.api_key: "id:api_key"
 #xpack.management.elasticsearch.ssl.ca_trusted_fingerprint: xxxxxxxxxx

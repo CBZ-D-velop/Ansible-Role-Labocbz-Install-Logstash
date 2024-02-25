@@ -9,8 +9,8 @@
 # Xms represents the initial size of total heap space
 # Xmx represents the maximum size of total heap space
 
--Xms{{ install_logstash_ram }}
--Xmx{{ install_logstash_ram }}
+-Xms{{ install_logstash__ram }}
+-Xmx{{ install_logstash__ram }}
 
 ################################################################
 ## Expert settings
@@ -63,7 +63,7 @@
 
 # specify an alternative path for heap dumps
 # ensure the directory exists and has sufficient space
-#-XX:HeapDumpPath=${install_logstash_HOME}/heapdump.hprof
+#-XX:HeapDumpPath=${install_logstash__HOME}/heapdump.hprof
 
 ## GC logging
 #-Xlog:gc*,gc+age=trace,safepoint:file=@loggc@:utctime,pid,tags:filecount=32,filesize=64m
