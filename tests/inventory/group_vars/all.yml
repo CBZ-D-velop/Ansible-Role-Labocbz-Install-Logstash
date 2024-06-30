@@ -16,14 +16,6 @@ inv_install_logstash__pipelines:
     workers: 1
     beats:
       - 5045
-  - name: "fail2ban"
-    workers: 1
-    beats:
-      - 5046
-  - name: "logstash"
-    workers: 1
-    beats:
-      - 5047
 
 inv_install_logstash__health_check_pipeline:
   name: "health"
