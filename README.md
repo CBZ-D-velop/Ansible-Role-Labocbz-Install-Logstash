@@ -409,6 +409,10 @@ Here you can put your change to keep a trace of your work and decisions.
 * New workers
 * Removed all automation based on branch
 
+### 2024-08-04: Fix configuration files
+
+* Fixe index template, beats, etc; tested with the ELK global installation
+
 ## Authors
 
 * Lord Robin Crombez

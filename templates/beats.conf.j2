@@ -19,6 +19,9 @@ input {
         ssl_certificate_authorities => ["{{ install_logstash__ssl_authorities }}"]
         {% endif %}
     }
+    pipeline {
+        address => "{{ pipeline.name }}"
+    }
 }
 {% endfor %}
 {% endif %}

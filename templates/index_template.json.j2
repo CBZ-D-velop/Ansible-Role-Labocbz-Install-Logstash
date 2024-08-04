@@ -1,5 +1,6 @@
 {
-  "index_patterns" : ["{{ pipeline.name }}-pipeline"],
+  "index_patterns" : ["{{ pipeline.name }}-*-*"],
+  "allow_auto_create": true,
   "template": {
     "settings" : {
       "number_of_shards" : {{ install_logstash__elasticsearch_shard }},
