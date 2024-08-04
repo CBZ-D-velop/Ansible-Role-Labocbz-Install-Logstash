@@ -25,7 +25,7 @@ input {
 
 output {
 {% for pipeline in install_logstash__pipelines %}
-    if [pipeline_name] == "{{ pipeline.name }}" {
+    if [fields][pipeline_name] == "{{ pipeline.name }}" {
         pipeline { send_to => {{ pipeline.name }} }
     }
 {% endfor %}
