@@ -9,7 +9,7 @@ output {
     hosts => [{% for host in install_logstash__elasticsearch_hosts %}"{% if install_logstash__elasticsearch_ssl %}https://{% else %}http://{% endif %}{{ host }}"{% if not loop.last %},{% endif %}{% endfor %}]
     user => "{{ install_logstash__elasticsearch_login }}"
     password => "{{ install_logstash__elasticsearch_password }}"
-    index => "{{ pipeline.name }}-%{[fields][env]}-%{+YYYY.MM.dd}"
+    index => "{{ pipeline.name }}-%{[fields][env]}-%{[host][name]}-%{+YYYY.MM.dd}"
     manage_template => true
     template => "{{ install_logstash__pipelines_path }}/{{ pipeline.name }}/template.json"
     template_name => "{{ pipeline.name }}"
